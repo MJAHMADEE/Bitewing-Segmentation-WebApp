@@ -21,7 +21,7 @@ export default function Register() {
         };
 
         try {
-            const response = await fetch('http://localhost:5005/v1/auth/register', {
+            const response = await fetch('http://localhost:5000/v1/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

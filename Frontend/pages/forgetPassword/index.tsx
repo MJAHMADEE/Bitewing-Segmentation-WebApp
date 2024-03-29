@@ -15,7 +15,7 @@ export default function ForgetPassword() {
 
         // Attempt to request password reset
         try {
-            const response = await fetch('http://localhost:5005/v1/auth/forgot-password', { // Replace with the correct server URL
+            const response = await fetch('http://localhost:5000/v1/auth/forgot-password', { // Replace with the correct server URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ export default function Login() {
 
         // ทำการร้องขอเข้าสู่ระบบ
         try {
-            const response = await fetch('http://localhost:5005/v1/auth/login', { // เปลี่ยนเป็น URL ของเซิร์ฟเวอร์ที่ถูกต้อง
+            const response = await fetch('http://localhost:5000/v1/auth/login', { // เปลี่ยนเป็น URL ของเซิร์ฟเวอร์ที่ถูกต้อง
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
