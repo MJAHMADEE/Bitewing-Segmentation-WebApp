@@ -1,8 +1,10 @@
+import Modal from "@/components/Modal";
 import Transition from "@/components/Transitions";
 import router from "next/router";
 import React, { useState } from "react";
 
 export default function Register() {
+    const [openComplete, setOpenComplete] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -33,7 +35,7 @@ export default function Register() {
 
             const data = await response.json();
             console.log(data);
-            alert("Registration successful!");
+            setOpenComplete(true);
         } catch (error) {
             console.error("Registration failed: ", error);
             alert("Registration failed.");
@@ -42,6 +44,17 @@ export default function Register() {
 
     return (
         <div className="w-full h-screen">
+
+            {/* Modal */}
+            <Modal
+                isOpen={openComplete}
+                setIsOpen={setOpenComplete}
+                title="Log In"
+                message="Registration successful! Please log in."
+                onUnderstood={() => router.push('/login')}
+                status={"success"}
+            />
+
             <Transition />
             <div className="bg-gradient-background h-full flex items-center justify-center">
                 <div className="w-[500px] h-[600px] rounded-lg">

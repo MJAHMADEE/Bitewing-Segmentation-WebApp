@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SideBar } from "@/components/SideBar";
 import Transition from "@/components/Transitions";
 import ReactECharts from 'echarts-for-react';
 import Image from 'next/image';
-import router from 'next/router';
 
 interface SettingCardProps {
     title: string;
@@ -11,25 +10,52 @@ interface SettingCardProps {
 }
 
 // Line Chart Component
-const LineChart = () => {
+// const LineChart = () => {
+//     const option = {
+//         title: {
+//             text: 'Predict Rate',
+//             textStyle: {
+//                 color: '#fff', // Set title text color to white
+//             }
+//         },
+//         xAxis: {
+//             type: 'category',
+//             data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+//         },
+//         yAxis: {
+//             type: 'value',
+//         },
+//         series: [
+//             {
+//                 data: [820, 932, 901, 934, 1290, 1330, 1320],
+//                 type: 'line',
+//             },
+//         ],
+//     };
+
+//     return <ReactECharts option={option} />;
+// };
+
+// Bar Chart Component
+const BarChart = () => {
     const option = {
         title: {
-            text: 'Predict Rate',
+            text: 'Radiographic Catagories',
             textStyle: {
                 color: '#fff', // Set title text color to white
             }
         },
         xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            data: ['R0', 'RA1-2', 'RA3', 'RB', 'RC'],
         },
         yAxis: {
             type: 'value',
         },
         series: [
             {
-                data: [820, 932, 901, 934, 1290, 1330, 1320],
-                type: 'line',
+                data: [2, 4, 3, 2, 1],
+                type: 'bar',
             },
         ],
     };
@@ -37,25 +63,24 @@ const LineChart = () => {
     return <ReactECharts option={option} />;
 };
 
-// Bar Chart Component
-const BarChart = () => {
+const BarChartI = () => {
     const option = {
         title: {
-            text: 'Predict per day',
+            text: 'ICCMS Catagories',
             textStyle: {
                 color: '#fff', // Set title text color to white
             }
         },
         xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            data: ['CSound', 'CInitial', 'CModerate', 'CExtensive'],
         },
         yAxis: {
             type: 'value',
         },
         series: [
             {
-                data: [120, 200, 150, 80, 70, 110, 130],
+                data: [5, 2, 4, 3],
                 type: 'bar',
             },
         ],
@@ -101,18 +126,6 @@ const PieChart = () => {
 };
 
 export default function DashboardMain() {
-
-    useEffect(() => {
-        // ตรวจสอบ token ใน localStorage
-        const token = localStorage.getItem("token");
-
-        // หากไม่พบ token, เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบหรือหน้า "Page Not Found"
-        if (!token) {
-            // router.push('/login'); // สำหรับเปลี่ยนเส้นทางไปหน้าเข้าสู่ระบบ
-            router.replace('/404'); // หรือใช้ router.replace('/404') สำหรับหน้า "Page Not Found"
-        }
-    }, []);
-
     return (
         <div className="w-full h-screen flex bg-gradient-background items-center ">
             {/* Sidebar */}
@@ -147,22 +160,22 @@ export default function DashboardMain() {
                 </div>
 
                 {/* Additional Settings */}
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
+                {/* <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
                     <SettingCard title="Setting 1" description="Adjust your preferences" />
                     <SettingCard title="Setting 2" description="Notification settings" />
                     <SettingCard title="Setting 3" description="Privacy options" />
-                </div>
+                </div> */}
 
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                    <div className='bg-gray-700 rounded-xl shadow-lg p-4 text-white flex flex-col h-full'>
-                        <LineChart />
-                    </div>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div className='bg-gray-700 rounded-xl shadow-lg p-4 text-white flex flex-col h-full'>
                         <BarChart />
                     </div>
                     <div className='bg-gray-700 rounded-xl shadow-lg p-4 text-white flex flex-col h-full'>
-                        <PieChart />
+                        <BarChartI />
                     </div>
+                    {/* <div className='bg-gray-700 rounded-xl shadow-lg p-4 text-white flex flex-col h-full'>
+                        <PieChart />
+                    </div> */}
                 </div>
             </div>
         </div>
@@ -181,3 +194,4 @@ function SettingCard({ title, description }: SettingCardProps) {
         </div>
     );
 }
+

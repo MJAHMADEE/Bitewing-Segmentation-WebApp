@@ -50,28 +50,28 @@ export default function Login() {
             <div className="bg-gradient-background h-full flex items-center justify-center">
                 <div className="w-[500px] h-[600px] rounded-lg border-white">
                     <div className="flex justify-center items-center h-[100px]">
-                        <h1 className="text-4xl font-bold">Login</h1>
+                        <h1 className="text-4xl font-bold text-white">Login</h1>
                     </div>
                     <form
                         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground border-white border p-14 rounded-xl"
                         onSubmit={handleSubmit}
                     >
-                        <label className="text-md" htmlFor="username">
+                        <label className="text-md text-white" htmlFor="username">
                             Username
                         </label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
                             name="username"
                             placeholder="Your username"
                             required
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
-                        <label className="text-md" htmlFor="password">
+                        <label className="text-md text-white" htmlFor="password">
                             Password
                         </label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
                             type="password"
                             name="password"
                             placeholder="Your password"

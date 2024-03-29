@@ -8,10 +8,11 @@ interface ModalProps {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onUnderstood: () => void;
   status: 'success' | 'info' | 'fail';
+  confirmText?: string;
 }
 
 
-const Modal: React.FC<ModalProps> = ({ title, message, isOpen, setIsOpen, onUnderstood, status }) => {
+const Modal: React.FC<ModalProps> = ({ title, message, isOpen, setIsOpen, onUnderstood, status, confirmText }) => {
   // Function to select background style based on status
   const getBackgroundStyle = () => {
     switch (status) {
@@ -81,12 +82,13 @@ const Modal: React.FC<ModalProps> = ({ title, message, isOpen, setIsOpen, onUnde
                 >
                   Understood!
                 </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="bg-transparent hover:bg-white/10 transition-colors text-white font-semibold py-2 rounded"
-                >
-                  Nah, go back
-                </button>
+                {confirmText && (
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="bg-transparent hover:bg-white/10 transition-colors text-white font-semibold py-2 rounded"
+                  >
+                    Nah, go back
+                  </button>)}
 
               </div>
             </div>
