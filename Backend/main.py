@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware 
 from fastapi import FastAPI
-from service.ImageService import image_to_base64
 from config.database import postgres
 import uvicorn
 import os
