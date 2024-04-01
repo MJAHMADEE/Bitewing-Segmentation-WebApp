@@ -1,12 +1,15 @@
 
+import base64
 import os
 import time
 from ultralytics import YOLO
+from io import BytesIO
 from PIL import Image
 
 import cv2
 import numpy as np
 from datetime import datetime
+from service.imageService import ImageService
 
 class CroppingService:
     def save_image(file):
@@ -68,10 +71,13 @@ class CroppingService:
             classname = classNames[int(cls)]
 
             cv2.imwrite(f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg', cropped)
+            img = Image.open(f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg')
+            
             data_tooth = {
                 "position": f"[{x1},{y1}],[{x2},{y2}]",
                 "numbering": classname,
-                "image_path": f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg'
+                "image_path": f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg',
+                "image_file": ImageService.image_to_base64(img)
             }
             img_path_list.append(data_tooth)
         for (bbox_xyxy, cls) in zip(bbox_xyxys, labels):
@@ -98,3 +104,4 @@ class CroppingService:
         print(f"Total time: {time3 - start_time} seconds")
         print("Cropping done!")
         return img_path_list, img_path  
+    

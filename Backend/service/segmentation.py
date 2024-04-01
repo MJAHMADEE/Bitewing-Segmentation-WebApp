@@ -6,6 +6,8 @@ from repository.bitewing import BitewingRepository
 from repository.image import ImageRepository
 from repository.segmentation import SegmentationRepository
 from repository.tooth import ToothRepository
+from service.imageService import ImageService
+from PIL import Image
 
 
 class SegmentationService:
@@ -59,15 +61,23 @@ class SegmentationService:
             tooth_id = await ToothRepository.create(tooth_insert)
             if not tooth_id:
                 return None
+            
+            img = Image.open(tooth_data.get("image_path"))
+
             tooth_data = {
                 "tooth_id": tooth_id,
                 "image_url": tooth_data.get("image_path"),
+                "image_file": ImageService.image_to_base64(img),
             }
             list_tooth_id.append(tooth_data)
+
+        img = Image.open(segmentation_request.bitewing_path)
+
         data_response ={
             "segmentation_id": result_id,
             "bitewing_id": bitewing_id,
             "bitewing_url": segmentation_request.bitewing_path,
+            "bitewing_file": ImageService.image_to_base64(img),
             "list_tooth": list_tooth_id
         }
         return data_response
