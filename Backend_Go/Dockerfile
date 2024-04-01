@@ -32,12 +32,12 @@ COPY --from=builder /app/patientMigrate .
 COPY --from=builder /app/segmentationMigrate .
 COPY --from=builder /app/img .
 
-COPY --from=builder /app/entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# COPY --from=builder /app/entrypoint.sh /usr/local/bin/
+# RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 5000
 
-ENTRYPOINT ["entrypoint.sh"]
+# ENTRYPOINT ["entrypoint.sh"]
 
 # Command to run the executable
 CMD ["./main"]

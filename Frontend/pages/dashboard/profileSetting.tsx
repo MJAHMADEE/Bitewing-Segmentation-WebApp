@@ -23,11 +23,17 @@ export default function ProfileSetting() {
     // Handle form submission
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        // Here you would typically handle the form submission, including the image file
+
+    // const userData = {
+    //     "first_name":firstname,
+    //     "last_name":lastname,
+    //     "gender":"male",
+    //     "start_date":"2024-02-15",
+    //     "year_ext":8
+    // }
+
         console.log("Submitted: ", { firstname, lastname, hostpital, email, password });
 
-        // To upload the image, you'll need to use FormData and append the file
-        // This is typically done when sending the data to your backend server
     };
 
     // Handle profile image change

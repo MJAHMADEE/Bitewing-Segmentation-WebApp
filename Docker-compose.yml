@@ -33,24 +33,24 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
-  # fastapi-backend:
-  #   container_name: fastapi-backend
-  #   build: ./Backend
-  #   environment:
-  #     - NODE_ENV=${NODE_ENV}
-  #     - POSTGRES_DB=${POSTGRES_DB}
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - POSTGRES_PORT=${POSTGRES_PORT}
-  #     - POSTGRES_HOST=${POSTGRES_HOST}
-  #     - JWT_SECRET=${JWT_SECRET}
-  #   volumes:
-  #     - ./img:/app/img
-  #   ports:
-  #     - 8000:80
-  #   depends_on:
-  #     - postgres
-  #   restart: always
+  fastapi-backend:
+    container_name: fastapi-backend
+    build: ./Backend
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./img:/app/img
+    ports:
+      - 8000:80
+    depends_on:
+      - postgres
+    restart: always
   golang-backend:
     container_name: golang-backend
     build: ./Backend_Go

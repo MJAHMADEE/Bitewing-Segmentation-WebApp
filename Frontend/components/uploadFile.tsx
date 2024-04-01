@@ -27,7 +27,6 @@ const UploadFile = () => {
     }
   };
 
-
   if (isLoading) {
     return (
       <div className="w-full h-screen">
@@ -45,11 +44,16 @@ const UploadFile = () => {
 
     setIsLoading(true);
     const formData = new FormData();
+    formData.append("patient_id", "1");
     formData.append("file", selectedFile);
+    const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/segmentation/test_crop", {
+      const response = await fetch("http://127.0.0.1:8000/api/segmentation/crop", {
         method: "POST",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -96,7 +100,6 @@ const UploadFile = () => {
   };
 
   return (
-
     <div className=" m-5 w-full sm:w-[500px] flex flex-col items-center justify-center p-6 bg-indigo-600 rounded-lg shadow-md mb-5 ">
       <Modal
         isOpen={openModal}
