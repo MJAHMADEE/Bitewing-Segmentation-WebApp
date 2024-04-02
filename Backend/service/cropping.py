@@ -9,7 +9,7 @@ from PIL import Image
 import cv2
 import numpy as np
 from datetime import datetime
-from service.imageService import ImageService
+from service.ImageService import ImageService
 
 class CroppingService:
     def save_image(file):

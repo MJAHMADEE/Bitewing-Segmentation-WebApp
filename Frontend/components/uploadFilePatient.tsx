@@ -3,6 +3,7 @@ import Image from "next/image";
 import ImageTable from "./ImageTable";
 import Loading from "./Loading";
 import Modal from "./Modal";
+import { UsersIcon } from "@heroicons/react/24/solid";
 
 const UploadFile = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -13,6 +14,10 @@ const UploadFile = () => {
     const [falseModal, setFalseModal] = useState(false);
     const [modelFail, setModelFail] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [patientId, setPatientId] = useState('');
+    const [birthOfDate, setBirthOfDate] = useState('');
+    const [gender, setGender] = useState('male');
+    const [age, setAge] = useState(0);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -28,7 +33,6 @@ const UploadFile = () => {
         }
     };
 
-
     if (isLoading) {
         return (
             <div className="w-full h-screen">
@@ -37,24 +41,76 @@ const UploadFile = () => {
         )
     }
 
+    const upPatient = async () => {
+        const today = new Date()
+        const dob = new Date(birthOfDate)
+        let a = today.getFullYear() - dob.getFullYear();
+        let token = localStorage.getItem('token')
+        setAge(a)
+
+        if(birthOfDate != '' && gender != ''){
+            try{
+                const res = await fetch("http://localhost:5000/v1/patient/",{
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                body: JSON.stringify({
+                    "age":age,
+                    "birth_date":birthOfDate.toString(),
+                    "gender":gender
+                }),
+                })
+
+                const resdata = await res.json()
+                console.log(resdata)
+            }
+            catch(error){
+
+            }
+        }
+    }
+
+    const getLastPatient = async () => {
+        let token = localStorage.getItem('token')
+        try{
+            const res = await fetch("http://localhost:5000/v1/patient/",{
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            const resdata= await res.json()
+            setPatientId(resdata.data[resdata.data.length - 1].patient_id)
+            console.log(patientId)
+        }
+        catch(error){
+        }
+    }
 
     const handleUpload = async () => {
+        await upPatient()
+        await getLastPatient()
 
         if (!selectedFile) {
             setIsLoading(false);
             setFalseModal(true);
             return;
         }
-
         setIsLoading(true);
 
         const formData = new FormData();
+        let token = localStorage.getItem('token');
+        formData.append("patient_id", patientId);
         formData.append("file", selectedFile);
-
+        
         try {
-
-            const response = await fetch("http://127.0.0.1:8000/api/segmentation/test_crop", {
+            const response = await fetch("http://127.0.0.1:8000/api/segmentation/crop", {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
                 body: formData,
             });
 
@@ -63,14 +119,16 @@ const UploadFile = () => {
             }
 
             const responseData = await response.json();
-            if (responseData.data.crop_img) {
-                // Assuming `responseData.crop_img` is the base64 string of the cropped image
-                // Convert base64 string to an image and set it for preview
-                setPreviewUrl(`data:image/jpeg;base64,${responseData.data.crop_img}`);
-                if (Array.isArray(responseData.data.list_crop_img)) {
-                    const formattedList = responseData.data.list_crop_img.map((img: any) => `data:image/jpeg;base64,${img.base64_image}`);
-                    setListCropImg(formattedList);
-                }
+            if (responseData.data.bitewing_file) {
+              // Assuming `responseData.crop_img` is the base64 string of the cropped image
+              // Convert base64 string to an image and set it for preview
+              setPreviewUrl(`data:image/jpeg;base64,${responseData.data.bitewing_file}`);
+              // console.log(responseData.list_crop_img);
+              if (Array.isArray(responseData.data.list_tooth)) {
+                const formattedList = responseData.data.list_tooth.map((item: { image_file: string }) => `data:image/jpeg;base64,${item.image_file}`);
+                setListCropImg(formattedList);
+              }
+      
             }
 
         } catch (error) {
@@ -78,7 +136,6 @@ const UploadFile = () => {
             setModelFail(true);
         } finally {
             setIsLoading(false);
-
         }
     };
 
@@ -99,8 +156,26 @@ const UploadFile = () => {
     };
 
     return (
+        <div className="m-5 w-full sm:w-[800px] flex flex-col items-center justify-center p-6 bg-indigo-600 rounded-lg shadow-md mb-5 ">
+            
+            <div className="flex flex-row items-center justify-center text-white mb-4">
+                <select
+                    className="rounded-md p-1 bg-inherit border mx-8"
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+                Date Of Birth:
+                <input
+                    className="rounded-md p-1 bg-inherit border mx-2"
+                    type="date"
+                    required
+                    onChange={(e) => setBirthOfDate(e.target.value)}
+                />
+            </div >
 
-        <div className=" m-5 w-full sm:w-[800px] flex flex-col items-center justify-center p-6 bg-indigo-600 rounded-lg shadow-md mb-5 ">
             <Modal
                 isOpen={openModal}
                 setIsOpen={setOpenModal}
@@ -137,6 +212,7 @@ const UploadFile = () => {
                 onUnderstood={() => setModelFail(false)}
                 status={"fail"}
             />
+
             <input
                 type="file"
                 onChange={handleFileChange}
@@ -202,7 +278,7 @@ const UploadFile = () => {
                 onClick={() => {
                     setOpenModal(true)
                 }}
-                className=" mt-5 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                className="px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
                 START PREDICT
             </button>

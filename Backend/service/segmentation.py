@@ -3,10 +3,10 @@ from model.image import ImageInsert
 from model.bitewing import BitewingInsert
 from model.tooth import ToothInsert
 from repository.bitewing import BitewingRepository
-from repository.image import ImageRepository
+from repository.Image import ImageRepository
 from repository.segmentation import SegmentationRepository
 from repository.tooth import ToothRepository
-from service.imageService import ImageService
+from service.ImageService import ImageService
 from PIL import Image
 
 

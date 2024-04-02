@@ -3,12 +3,12 @@ package server
 import (
     "fmt"
     "segmentation/configs"
-
     "github.com/go-playground/validator/v10"
     "github.com/labstack/echo/v4"
     "github.com/labstack/echo/v4/middleware"
     "gorm.io/gorm"
 )
+
 
 type echoServer struct {
     app *echo.Echo
@@ -27,9 +27,9 @@ func NewEchoServer(cfg *configs.Config, db *gorm.DB) Server {
 func (s *echoServer) Start() {
     // Set up CORS middleware
     s.app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-        AllowOrigins: []string{"http://localhost:3000"}, // Or the origins you wish to allow
+        AllowOrigins: []string{"*"}, // Allow all origins
         AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
-        AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+        AllowHeaders: []string{"*"},
     }))
 
     // Initialize routers here

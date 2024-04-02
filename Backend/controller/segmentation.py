@@ -7,7 +7,7 @@ from model.response import ResponseModel
 from service.cropping import CroppingService
 from service.auth import AuthService
 from service.segmentation import SegmentationService
-from service.imageService import ImageService
+from service.ImageService import ImageService
 from model.segmentation import SegmentationRequest
 from PIL import Image
 
