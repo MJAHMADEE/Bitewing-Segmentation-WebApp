@@ -49,7 +49,6 @@ class CroppingService:
         Image.fromarray(boxes).show()
 
         time1 = time.time()
-
         file_name, file_extension = os.path.splitext(os.path.basename(img_path))
         img_name = file_name[:-4]
         count = 0
@@ -58,11 +57,13 @@ class CroppingService:
         color = [[0,0,255], [0,255,0], [255,0,0], [0,255,255], [150,255,150], [255,0,255], [24,67,85], [25,55,123], [14,128,128], [128,0,0], [128,128,0], [0,128,0], [0,128,128]]
         bbox_xyxys = (result[0].boxes.xyxy).tolist()
         labels = result[0].boxes.cls.tolist()
+        confidences = result[0].boxes.conf.tolist()
+
         frame = cv2.imread(img_path)
 
         time2 = time.time()
         
-        for (bbox_xyxy, cls) in zip(bbox_xyxys, labels):
+        for (bbox_xyxy, cls,confidence) in zip(bbox_xyxys, labels,confidences):
             bbox = np.array(bbox_xyxy)
             x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
@@ -75,9 +76,11 @@ class CroppingService:
             
             data_tooth = {
                 "position": f"[{x1},{y1}],[{x2},{y2}]",
+                "confidence": str(confidence),
                 "numbering": classname,
                 "image_path": f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg',
                 "image_file": ImageService.image_to_base64(img)
+                
             }
             img_path_list.append(data_tooth)
         for (bbox_xyxy, cls) in zip(bbox_xyxys, labels):

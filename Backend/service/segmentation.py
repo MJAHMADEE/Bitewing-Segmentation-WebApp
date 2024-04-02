@@ -66,6 +66,8 @@ class SegmentationService:
 
             tooth_data = {
                 "tooth_id": tooth_id,
+                "numbering":tooth_data.get("numbering"),
+                "confidence":tooth_data.get("confidence"),
                 "image_url": tooth_data.get("image_path"),
                 "image_file": ImageService.image_to_base64(img),
             }
