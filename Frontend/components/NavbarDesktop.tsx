@@ -20,7 +20,7 @@ const NavbarDesktop = () => {
     };
 
     return (
-        <nav className="bg-navbar-purple p-4">
+        <nav className="bg-navbar-purple p-4 z-20">
             <div className="container mx-auto flex items-center justify-between flex-wrap">
                 <div className="text-white flex-1">
                     <Link href="https://sites.google.com/view/sf341smokybite/home">

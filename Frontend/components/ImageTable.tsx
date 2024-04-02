@@ -4,6 +4,7 @@ import DetailsModal from "./DetailsModal"; // Import the DetailsModal component
 
 interface ImageTableProps {
     images: string[];
+
 }
 
 interface ToothDetails {
@@ -38,8 +39,10 @@ const ImageTable: React.FC<ImageTableProps> = ({ images }) => {
     };
 
     return (
-        <div className="bg-indigo-600 p-4 w-full">
-            <div className="flex space-x-5">
+
+
+        <div className="w-full h-[80vh] text-white pr-2 overflow-y-scroll">
+            <div className="">
                 <div className="flex flex-row">
                     <div>
                         {images.map((img, index) => (
@@ -61,7 +64,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images }) => {
                                     <h1>Class 31</h1>
                                     <p>confidence: 0.99</p>
                                 </div>
-                                <button onClick={() => openDetailsModal(index)} className="flex justify-end items-end underline">
+                                <button onClick={() => openDetailsModal(index)} className="flex justify-end items-end underline hover:font-bold">
                                     แก้ไข
                                 </button>
                             </div>
@@ -82,6 +85,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images }) => {
                 )}
             </div>
         </div>
+
     );
 };
 

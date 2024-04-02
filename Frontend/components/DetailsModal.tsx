@@ -26,7 +26,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
 
     return (
         <>
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-40 w-full -translate-x-5"></div>
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-40 w-[110%] -translate-x-5"></div>
             <div className="modal fixed z-50 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-lg rounded-lg p-6 text-black max-w-lg w-11/12 md:w-1/2 ">
                 <div className="flex flex-row">
                     {imageUrl && (

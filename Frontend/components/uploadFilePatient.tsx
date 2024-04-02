@@ -17,7 +17,10 @@ const UploadFile = () => {
     const [patientId, setPatientId] = useState('');
     const [birthOfDate, setBirthOfDate] = useState('');
     const [gender, setGender] = useState('male');
-    const [age, setAge] = useState(0);
+    const [age, setAge] = useState(1);
+    const [show, setShow] = useState(false);
+    const [showUpload, setShowUpload] = useState(false);
+    const [cid, setCid] = useState(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -47,6 +50,13 @@ const UploadFile = () => {
         let a = today.getFullYear() - dob.getFullYear();
         let token = localStorage.getItem('token')
         setAge(a)
+        
+        const data = JSON.stringify({
+            "age":age,
+            "birth_date":birthOfDate.toString(),
+            "gender":gender
+        })
+        console.log(data)
 
         if(birthOfDate != '' && gender != ''){
             try{
@@ -56,19 +66,22 @@ const UploadFile = () => {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                body: JSON.stringify({
-                    "age":age,
-                    "birth_date":birthOfDate.toString(),
-                    "gender":gender
-                }),
+                body: data,
                 })
 
                 const resdata = await res.json()
                 console.log(resdata)
+                if(resdata.message == 'Patient created'){
+                    await getLastPatient()
+                    setShowUpload(true)
+                }
             }
             catch(error){
 
             }
+        }
+        else{
+            alert("fill")
         }
     }
 
@@ -90,8 +103,6 @@ const UploadFile = () => {
     }
 
     const handleUpload = async () => {
-        await upPatient()
-        await getLastPatient()
 
         if (!selectedFile) {
             setIsLoading(false);
@@ -120,6 +131,7 @@ const UploadFile = () => {
 
             const responseData = await response.json();
             if (responseData.data.bitewing_file) {
+                setCid(responseData.data.segmentation_id)
               // Assuming `responseData.crop_img` is the base64 string of the cropped image
               // Convert base64 string to an image and set it for preview
               setPreviewUrl(`data:image/jpeg;base64,${responseData.data.bitewing_file}`);
@@ -128,14 +140,22 @@ const UploadFile = () => {
                 const formattedList = responseData.data.list_tooth.map((item: { image_file: string }) => `data:image/jpeg;base64,${item.image_file}`);
                 setListCropImg(formattedList);
               }
+
+              setShow(true)
       
             }
-
         } catch (error) {
             setIsLoading(false);
             setModelFail(true);
         } finally {
             setIsLoading(false);
+        }
+
+        try{
+
+        }
+        catch(error){
+
         }
     };
 
@@ -156,139 +176,147 @@ const UploadFile = () => {
     };
 
     return (
-        <div className="m-5 w-full sm:w-[800px] flex flex-col items-center justify-center p-6 bg-indigo-600 rounded-lg shadow-md mb-5 ">
-            
-            <div className="flex flex-row items-center justify-center text-white mb-4">
-                <select
-                    className="rounded-md p-1 bg-inherit border mx-8"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select>
-                Date Of Birth:
-                <input
-                    className="rounded-md p-1 bg-inherit border mx-2"
-                    type="date"
-                    required
-                    onChange={(e) => setBirthOfDate(e.target.value)}
-                />
-            </div >
-
-            <Modal
-                isOpen={openModal}
-                setIsOpen={setOpenModal}
-                title="Predict will use time"
-                message="Are you sure you want to predict?"
-                onUnderstood={() => handleUpload()}
-                status={"info"}
-            />
-
-            <Modal
-                isOpen={saveModal}
-                setIsOpen={setSaveModal}
-                title="Save predict result"
-                message="Are you sure you want to save predict result?"
-                onUnderstood={() => handleUpload()}
-                status={"info"}
-            />
-
-
-            <Modal
-                isOpen={falseModal}
-                setIsOpen={setFalseModal}
-                title="Fail to predict"
-                message="Make sure you have selected a file."
-                onUnderstood={() => setFalseModal(false)}
-                status={"fail"}
-            />
-
-            <Modal
-                isOpen={modelFail}
-                setIsOpen={setModelFail}
-                title="Fail to predict"
-                message="Can not connect to server. Please try again."
-                onUnderstood={() => setModelFail(false)}
-                status={"fail"}
-            />
-
-            <input
-                type="file"
-                onChange={handleFileChange}
-                className="mb-4 block w-full px-4 py-2 text-sm text-gray-700 bg-indigo-300 0 rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                accept="image/png, image/jpeg, image/tiff, application/pdf"
-            />
-            {previewUrl && (
-                <div className="preview-container" style={{ overflow: "auto" }}>
-                    {selectedFile?.type === "application/pdf" ? (
-                        <object
-                            data={previewUrl}
-                            type="application/pdf"
-                            width="100%"
-                            height="500px"
-                            className="mb-4"
+        
+        <div className="sm:w-800 flex flex-row bg-indigo-600 rounded-lg shadow-md p-4 mt-24">
+            <div className="m-2">
+                {!showUpload && (
+                    <div className="flex flex-row items-center justify-center text-white mb-4">
+                        Patient:
+                        <select
+                            className="rounded-md p-1 bg-inherit border mx-8"
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
                         >
-                            <p>
-                                Your browser does not support PDFs. Please download the PDF to
-                                view it: <a href={previewUrl}>Download PDF</a>.
-                            </p>
-                        </object>
-                    ) : selectedFile?.type === "image/tiff" ? (
-                        <Image
-                            src={previewUrl}
-                            alt="TIFF Preview"
-                            width={500}
-                            height={500}
-                            style={{
-                                width: "auto",
-                                height: "auto",
-                                maxWidth: "500px",
-                                maxHeight: "500px",
-                            }}
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                        Date Of Birth:
+                        <input
+                            className="rounded-md p-1 bg-inherit border mx-2"
+                            type="date"
+                            max="2022-12-31"
+
+                            required
+                            onChange={(e) => setBirthOfDate(e.target.value)}
                         />
-                    ) : (
-                        <Image
-                            src={previewUrl}
-                            width={500}
-                            height={500}
-                            alt="Preview"
-                            className="mb-4 max-w-xs rounded-md"
-                        />
-                    )}
+                        <button
+                            className="px-6 py-2 mx-4 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            onClick={upPatient}
+                        >SAVE</button>
+
+                    </div >)}
+    
+                <div>
+                    <Modal
+                        isOpen={openModal}
+                        setIsOpen={setOpenModal}
+                        title="Predict will use time"
+                        message="Are you sure you want to predict?"
+                        onUnderstood={() => handleUpload()}
+                        status={"info"}
+                    />
+
+                    <Modal
+                        isOpen={saveModal}
+                        setIsOpen={setSaveModal}
+                        title="Save predict result"
+                        message="Are you sure you want to save predict result?"
+                        onUnderstood={() => handleUpload()}
+                        status={"info"}
+                    />
+
+                    <Modal
+                        isOpen={falseModal}
+                        setIsOpen={setFalseModal}
+                        title="Fail to predict"
+                        message="Make sure you have selected a file."
+                        onUnderstood={() => setFalseModal(false)}
+                        status={"fail"}
+                    />
+
+                    <Modal
+                        isOpen={modelFail}
+                        setIsOpen={setModelFail}
+                        title="Fail to predict"
+                        message="Can not connect to server. Please try again."
+                        onUnderstood={() => setModelFail(false)}
+                        status={"fail"}
+                    />
                 </div>
-            )}
-            <div>
+
+                {showUpload && (
+                    <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="mb-4 block w-full px-4 py-2 text-sm text-gray-700 bg-indigo-300 0 rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        accept="image/png, image/jpeg, image/tiff, application/pdf"
+                    />
+
+                )}
+                
+                {previewUrl && (
+                    <div className="preview-container" style={{ overflow: "auto" }}>
+                        {selectedFile?.type === "application/pdf" ? (
+                            <object
+                                data={previewUrl}
+                                type="application/pdf"
+                                width="100%"
+                                height="700px"
+                                className="mb-4"
+                            >
+                                <p>
+                                    Your browser does not support PDFs. Please download the PDF to
+                                    view it: <a href={previewUrl}>Download PDF</a>.
+                                </p>
+                            </object>
+                        ) : selectedFile?.type === "image/tiff" ? (
+                            <Image
+                                src={previewUrl}
+                                alt="TIFF Preview"
+                                width={700}
+                                height={700}
+                                className="mb-4 max-w-xs rounded-md"
+                            />
+                        ) : (
+                            <Image
+                                src={previewUrl}
+                                width={700}
+                                height={700}
+                                alt="Preview"
+                                className="sm:w-300 sm:h-300 w-700 h-700 max-w-700 rounded-xl"
+                            />
+                        )}
+                    </div>
+                )}
+                {showUpload && (
+                    <div className="justify-center content-center">
+                    <button
+                        onClick={() => {
+                            setOpenModal(true)
+                        }}
+                        className="mx-8 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        START PREDICT
+                    </button>
+
+                    {listCropImg && (
+                        <button
+                            onClick={downloadCroppedImage}
+                            className="mt-5 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                            DOWNLOAD CROPPED IMAGE
+                        </button>)}
+                </div>
+                )}
+                
+            </div>
+            {show && (
+                <div className="m-2">
                 <ImageTable
                     images={listCropImg ?? []}
                 />
-
             </div>
-            {listCropImg && (
-                <button
-                    onClick={() => {
-                        setSaveModal(true)
-                    }}
-                    className=" mt-5 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                >
-                    SAVE PREDICT IMAGE
-                </button>)}
-
-            <button
-                onClick={() => {
-                    setOpenModal(true)
-                }}
-                className="px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-            >
-                START PREDICT
-            </button>
-            {/* <button
-        onClick={downloadCroppedImage}
-        className="mt-5 px-6 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-      >
-        DOWNLOAD CROPPED IMAGE
-      </button> */}
-
+            )}
 
         </div>
 

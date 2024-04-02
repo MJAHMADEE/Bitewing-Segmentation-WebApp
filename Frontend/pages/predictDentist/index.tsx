@@ -16,7 +16,7 @@ export default function Predict() {
     const [openPredict, setOpenPredict] = useState(false)
 
     return (
-        <div className="h-full">
+        <div className="h-screen">
             <Modal
                 isOpen={openConfirm}
                 setIsOpen={setOpenConfirm}
@@ -25,7 +25,6 @@ export default function Predict() {
                 onUnderstood={() => setOpenPredict(true)}
                 status={"info"}
             />
-
             <Modal
                 isOpen={openPredict}
                 setIsOpen={setOpenPredict}
@@ -35,16 +34,17 @@ export default function Predict() {
                 status={"info"}
             />
             <Transition />
+
             <div className="block md:hidden">
                 <NavbarMobile />
             </div>
-            <div className="hidden md:block">
+            
+            <div className="hidden md:block w-screen absolute">
                 <NavbarDesktop />
             </div>
 
-
-            <div className="bg-gradient-background min-h-screen h-full flex flex-col  sm:flex-col  items-center justify-center">
-                <div className="flex w-full items-center justify-center ">
+            <div className="bg-gradient-background min-h-screen h-full">
+                <div className="flex items-center justify-center">
                     <UploadFilePatient />
                 </div>
             </div>
