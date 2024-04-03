@@ -5,6 +5,23 @@ import Loading from "./Loading";
 import Modal from "./Modal";
 import { UsersIcon } from "@heroicons/react/24/solid";
 
+interface listToothSave {
+    tooth_id: number;
+    name:string;
+    type_tooth:string;
+    type_caries:string;
+    filing:string;
+    description:string;
+    treatment:string;
+}
+
+interface save {
+    description:string,
+    treatment:string,
+    list_tooth:listToothSave[]
+}
+
+
 const UploadFile = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -17,11 +34,26 @@ const UploadFile = () => {
     const [patientId, setPatientId] = useState('');
     const [birthOfDate, setBirthOfDate] = useState('');
     const [gender, setGender] = useState('male');
-    const [age, setAge] = useState(1);
     const [show, setShow] = useState(false);
     const [showUpload, setShowUpload] = useState(false);
-    const [cid, setCid] = useState(null);
+    const [sid, setSid] = useState(null)
+    const [saveState, setSaveState] = useState<save>({ description: "", treatment: "", list_tooth: [] });
 
+    const prepareSaveData = () =>{
+        if(listCropImg != null){
+            let tempList = listCropImg.map(tooth => ({
+                tooth_id: parseInt(tooth.tooth_id),
+                name: "",
+                type_tooth: tooth.severity,
+                type_caries: tooth.carie_type,
+                filing: "",
+                description: "",
+                treatment: tooth.detail 
+            }));
+            setSaveState({...saveState,list_tooth:tempList})
+        }
+    }
+    
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
         setSelectedFile(file);
@@ -49,10 +81,9 @@ const UploadFile = () => {
         const dob = new Date(birthOfDate)
         let a = today.getFullYear() - dob.getFullYear();
         let token = localStorage.getItem('token')
-        setAge(a)
         
         const data = JSON.stringify({
-            "age":age,
+            "age":a,
             "birth_date":birthOfDate.toString(),
             "gender":gender
         })
@@ -131,17 +162,26 @@ const UploadFile = () => {
 
             const responseData = await response.json();
             if (responseData.data.bitewing_file) {
-                setCid(responseData.data.segmentation_id)
               // Assuming `responseData.crop_img` is the base64 string of the cropped image
               // Convert base64 string to an image and set it for preview
               setPreviewUrl(`data:image/jpeg;base64,${responseData.data.bitewing_file}`);
               // console.log(responseData.list_crop_img);
               if (Array.isArray(responseData.data.list_tooth)) {
-                const formattedList = responseData.data.list_tooth.map((item: { image_file: string }) => `data:image/jpeg;base64,${item.image_file}`);
+                const formattedList = await responseData.data.list_tooth.map((item: { numbering: string; confidence: string; image_file: string; tooth_id: string}) => ({
+                    tooth_id: item.tooth_id,
+                    numbering: item.numbering,
+                    confidence: item.confidence,
+                    image_file: `data:image/jpeg;base64,${item.image_file}`,
+                    carie_type: 'NONE',
+                    severity: 'NONE',
+                    detail: ''
+                }));
+                console.log(formattedList)
+                setSid(responseData.data.segmentation_id)
                 setListCropImg(formattedList);
               }
-
               setShow(true)
+              console.log(listCropImg)
       
             }
         } catch (error) {
@@ -174,6 +214,30 @@ const UploadFile = () => {
             setFalseModal(true);
         }
     };
+
+    const saveResult = async () => {
+        let token = localStorage.getItem('token');
+        prepareSaveData()
+        console.log(saveState)
+        console.log(sid)
+        try{
+            const resp = await fetch("http://localhost:5000/v1/segmentation/"+sid,{
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
+                body: JSON.stringify(saveState)
+            })
+            const responseData = await resp.json();
+            if(responseData.message == "Success"){
+                alert("saved")
+            }
+        }
+        catch(error){
+
+        }
+    }
 
     return (
         
@@ -290,23 +354,33 @@ const UploadFile = () => {
                 )}
                 {showUpload && (
                     <div className="justify-center content-center">
-                    <button
-                        onClick={() => {
-                            setOpenModal(true)
-                        }}
-                        className="mx-8 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                    >
-                        START PREDICT
-                    </button>
-
-                    {listCropImg && (
                         <button
-                            onClick={downloadCroppedImage}
-                            className="mt-5 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            onClick={() => {
+                                setOpenModal(true)
+                            }}
+                            className="mx-8 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                         >
-                            DOWNLOAD CROPPED IMAGE
-                        </button>)}
-                </div>
+                            START PREDICT
+                        </button>
+
+                        {listCropImg && (
+                            <button
+                                onClick={downloadCroppedImage}
+                                className="mt-5 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            >
+                                DOWNLOAD CROPPED IMAGE
+                            </button>)}
+
+                        {listCropImg && (
+                            <button
+                                onClick={() => saveResult()}
+                                className="mt-5 mx-7 px-6 py-2 text-black bg-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            >
+                                SAVE CHANGE
+                            </button>
+                        )}
+                        
+                    </div>
                 )}
                 
             </div>
@@ -314,6 +388,7 @@ const UploadFile = () => {
                 <div className="m-2">
                 <ImageTable
                     images={listCropImg ?? []}
+                    setListCropImg={setListCropImg}
                 />
             </div>
             )}

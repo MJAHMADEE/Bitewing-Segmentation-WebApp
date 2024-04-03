@@ -5,28 +5,34 @@ import Dropdown from "./Dropdown";
 interface DetailsModalProps {
     isOpen: boolean;
     imageUrl?: string; // Optional prop for image URL
-    details: string;
+    data: object;
     onSave: () => void;
     onCancel: () => void;
     onDetailsChange: (details: string) => void;
+    toothCariesType: string;
+    setCariesToothType: React.Dispatch<React.SetStateAction<string[] | null>>
+    toothCType: string;
+    setToothCType: React.Dispatch<React.SetStateAction<string[] | null>>
 }
 
 const DetailsModal: React.FC<DetailsModalProps> = ({
     isOpen,
     imageUrl,
-    details,
+    data,
     onSave,
     onCancel,
     onDetailsChange,
+    toothCariesType,
+    setCariesToothType,
+    toothCType,
+    setToothCType
 }) => {
-    const [toothCariesType, setCariesToothType] = useState("NONE");
-    const [toothCType, setToothCType] = useState("NONE");
 
     if (!isOpen) return null; // Do not render the modal if it is not open
 
     return (
-        <>
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-40 w-[110%] -translate-x-5"></div>
+
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 w-[110%] -translate-x-5">
             <div className="modal fixed z-50 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-lg rounded-lg p-6 text-black max-w-lg w-11/12 md:w-1/2 ">
                 <div className="flex flex-row">
                     {imageUrl && (
@@ -41,6 +47,9 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                         </div>
                     )}
                     <div className="flex flex-col ml-5 mb-5">
+                        <div className="font-bold text-3xl">
+                            CLASS {data.numbering}
+                        </div>
                         <div>
                             <h1 className="text-md font-bold text-gray-800 mb-4 mt-6 ">Caries type</h1>
                             <Dropdown options={["NONE", "R0", "RA1-2", "RA3", "RB", "RC"]} selectedOption={toothCariesType} onOptionChange={setCariesToothType} />
@@ -54,7 +63,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
 
                 <textarea
                     className="w-full p-3 border border-gray-300 rounded mb-4"
-                    value={details}
+                    value={data.details}
                     onChange={(e) => onDetailsChange(e.target.value)}
                     rows={5}
                     placeholder="Enter details here..."
@@ -74,7 +83,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                     </button>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
