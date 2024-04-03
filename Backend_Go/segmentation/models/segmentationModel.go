@@ -35,7 +35,7 @@ type (
 		ToothId     uint64 `json:"tooth_id" validate:"required"`
 		Name        string `json:"name"`
 		TypeTooth   string `json:"type_tooth"`
-		TypeCaries  string `json:"type_caries" validate:"required"`
+		TypeCaries  string `json:"type_caries"`
 		Filing      string `json:"filing"`
 		Description string `json:"description"`
 		Treatment   string `json:"treatment"`
