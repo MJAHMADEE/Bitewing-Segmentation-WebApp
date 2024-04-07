@@ -63,7 +63,7 @@ export default function HistoryDashboard() {
     };
 
 
-    const TABLE_HEAD = ["Patient ID", "Gender", "Age", "Phone", "Predict Image", "Edit"];
+    const TABLE_HEAD = ["Patient ID", "Gender", "Age", "Birth Date", "Predict Image", "Edit"];
 
     const [TABLE_ROWS, setTABLE_ROWS] = useState<Array<any>>([
         {
@@ -112,6 +112,37 @@ export default function HistoryDashboard() {
             phonenumber: "0930000000",
         },
     ]);
+
+    const [patientId, setPatientId] = useState('');
+
+    const getLastPatient = async () => {
+        let token = localStorage.getItem('token');
+        try {
+            const res = await fetch("http://localhost:5000/v1/segmentation/", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            const resData = await res.json();
+            if (resData.message === 'Success' && resData.data.length > 0) {
+                const lastPatientId = resData.data[resData.data.length - 1].patient.patient_id;
+                setPatientId(lastPatientId.toString()); // แปลงเป็น string หากจำเป็น
+                console.log(resData);
+            } else {
+                // กรณีไม่มีข้อมูลหรือไม่สำเร็จ
+                console.log('No data or request was unsuccessful');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
+
+    useEffect(() => {
+        getLastPatient()
+    }, [])
 
     useEffect(() => {
         if (TABLE_ROWS.length > 0) {
