@@ -52,7 +52,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
             details: images[index].detail || '',
             imageUrl: images[index].image_file || '',
             tooth_id: images[index].tooth_id || '',
-            numbering: images[index].numbering || '' ,
+            numbering: images[index].numbering || '',
             confidence: images[index].confidence || '',
             carie_type: images[index].carie_type || '',
             severity: images[index].severity || ''
@@ -70,10 +70,12 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
         setDetailsModalOpen(false);
 
         const imagesCopy = [...images]
-        imagesCopy[currentToothDetails.index] = {...imagesCopy[currentToothDetails.index],
+        imagesCopy[currentToothDetails.index] = {
+            ...imagesCopy[currentToothDetails.index],
             carie_type: toothCariesType,
             detail: currentToothDetails.details,
-            severity: toothCType,}
+            severity: toothCType,
+        }
         setListCropImg(imagesCopy)
 
         console.log("curr", currentToothDetails)

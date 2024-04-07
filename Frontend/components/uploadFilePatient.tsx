@@ -27,6 +27,7 @@ const UploadFile = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [listCropImg, setListCropImg] = useState<string[] | null>(null);
+    const [listFullCropImg, setListFullCropImg] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [saveModal, setSaveModal] = useState(false);
     // const [falseModal, setFalseModal] = useState(false);
@@ -152,6 +153,8 @@ const UploadFile = () => {
 
         // If it's a folder upload, loop through all files and post them one by one
         if (isFolderUpload && previewUrls) {
+
+            setListFullCropImg([]);
             for (const fileData of previewUrls) {
                 const formData = new FormData();
                 formData.append("patient_id", patientId);
@@ -173,8 +176,13 @@ const UploadFile = () => {
                     const responseData = await response.json();
                     // Process each response
                     console.log(responseData);
+                    setListFullCropImg(prevList => [
+                        ...prevList,
+                        { url: responseData.url || `data:image/jpeg;base64,${responseData.data.bitewing_file}` }
+                    ]);
                     // Here you may want to update state with each image result
                     // ...
+
 
                 } catch (error) {
                     console.error('Error uploading file:', error);
@@ -381,6 +389,16 @@ const UploadFile = () => {
                     </>
                 )}
 
+                {listFullCropImg && (
+                    <div className="flex flex-row">
+                        {listFullCropImg.map((img, index) => (
+                            <div key={index} className="p-2">
+                                <img src={img.url} alt={`Cropped image ${index}`} className="w-24 h-24 object-cover" />
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 {isFolderUpload && (
                     <>
                         <FolderUploadComponent setPreviewUrls={setPreviewUrls} />
@@ -425,6 +443,13 @@ const UploadFile = () => {
                                 className="sm:w-300 sm:h-300 w-700 h-700 max-w-700 rounded-xl"
                             />
                         )}
+                        {
+                            listFullCropImg.map((img, index) => (
+                                <div key={index} className="p-2">
+                                    <img src={img.url} alt={`Cropped image ${index}`} className="w-24 h-24 object-cover" />
+                                </div>
+                            ))
+                        }
                     </div>
                 )}
                 {showUpload && (
@@ -457,6 +482,7 @@ const UploadFile = () => {
 
                     </div>
                 )}
+
 
 
             </div>
