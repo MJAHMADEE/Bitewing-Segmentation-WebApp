@@ -28,7 +28,7 @@ export default function Home() {
   };
   return (
     // Full screen background
-    <div className="h-screen">
+    <div className="h-full min=h=screen">
       <Transition />
       <div className="block md:hidden">
         <NavbarMobile />
@@ -210,7 +210,7 @@ export default function Home() {
           </div>
 
         </div>
-        
+
       </div>
 
     </div>

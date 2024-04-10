@@ -58,7 +58,7 @@ export default function Register() {
             <Transition />
             <div className="bg-gradient-background h-full flex items-center justify-center">
                 <div className="w-[500px] h-[600px] rounded-lg">
-                    <div className="flex justify-center items-center h-[100px]">
+                    <div className="flex justify-center items-center h-[100px] text-white">
                         <h1 className="text-4xl font-bold">Register</h1>
                     </div>
                     <form
@@ -112,7 +112,7 @@ export default function Register() {
                         </button>
                         <button onClick={() => router.push('../login')}
                             type="button"
-                            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+                            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 text-white"
                         >
                             Login
                         </button>

@@ -75,7 +75,10 @@ export function SideBar() {
                     setIsOpen={setOpenLogout}
                     title="Log Out"
                     message="Are you sure you want to log out?"
-                    onUnderstood={() => router.push('/login')}
+                    onUnderstood={() => {
+                        localStorage.removeItem("token");
+                        router.push('/main')
+                    }}
                     status={"success"}
                 />
 
