@@ -295,7 +295,7 @@ const UploadFile = () => {
 
     return (
 
-        <div className="sm:w-800 flex flex-row bg-indigo-600 rounded-lg shadow-md p-4 mt-24">
+        <div className="sm:w-800 flex flex-row bg-indigo-600 rounded-lg shadow-md p-4 mt-24 h-full">
             <div className="m-2">
                 {!showUpload && (
                     <div className="flex flex-row items-center justify-center text-white mb-4">
@@ -373,7 +373,10 @@ const UploadFile = () => {
                 )} */}
 
                 {showUpload && !isFolderUpload && (
-                    <>
+                    <div className="flex flex-col justify-center items-center w-full">
+                        <div>
+                            <h1 className="text-white text-center mb-2">Upload Single File</h1>
+                        </div>
                         <input
                             type="file"
                             onChange={(e) => handleFileChange(e, false)}
@@ -381,19 +384,23 @@ const UploadFile = () => {
                             accept="image/png, image/jpeg, image/tiff, application/pdf"
                         />
                         <button
-                            onClick={() => setIsFolderUpload(true)}
-                            className="mt-2 text-white bg-blue-500 hover:bg-blue-700 rounded-md px-4 py-2"
+                            onClick={() => {
+                                setIsFolderUpload(true)
+                                setPreviewUrl(null)
+                                setListCropImg(null)
+                            }}
+                            className="mb-2 text-white bg-blue-500 hover:bg-blue-700 rounded-md px-4 py-2 w-full"
                         >
                             Switch to Folder Upload
                         </button>
-                    </>
+                    </div>
                 )}
 
                 {listFullCropImg && (
                     <div className="flex flex-row">
                         {listFullCropImg.map((img, index) => (
                             <div key={index} className="p-2">
-                                <img src={img.url} alt={`Cropped image ${index}`} className="w-24 h-24 object-cover" />
+                                <img src={img.url} alt={`Cropped image ${index}`} className="w-40 h-40 object-cover" />
                             </div>
                         ))}
                     </div>
@@ -401,10 +408,13 @@ const UploadFile = () => {
 
                 {isFolderUpload && (
                     <>
+                        <div>
+                            <h1 className="text-white text-center mb-2">Upload Folder</h1>
+                        </div>
                         <FolderUploadComponent setPreviewUrls={setPreviewUrls} />
                         <button
                             onClick={() => setIsFolderUpload(false)}
-                            className="mt-2 text-white bg-red-500 hover:bg-red-700 rounded-md px-4 py-2"
+                            className="mt-2 text-white bg-red-500 hover:bg-red-700 rounded-md px-4 py-2 mb-2 flex justify-center items-center"
                         >
                             Switch to Single File Upload
                         </button>
