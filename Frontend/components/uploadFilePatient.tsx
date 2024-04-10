@@ -6,6 +6,16 @@ import Modal from "./Modal";
 import { UsersIcon } from "@heroicons/react/24/solid";
 import FolderUploadComponent from "./FolderUploadComponent";
 
+interface Tooth {
+    tooth_id: number;
+    severity: string;
+    carie_type: string;
+    detail: string;
+    numbering: string;
+    image_file: string;
+    confidence: string;
+}
+
 interface listToothSave {
     tooth_id: number;
     name: string;
@@ -22,12 +32,10 @@ interface save {
     list_tooth: listToothSave[]
 }
 
-
 const UploadFile = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [listCropImg, setListCropImg] = useState<string[] | null>(null);
-    const [listFullCropImg, setListFullCropImg] = useState([]);
+    const [listCropImg, setListCropImg] = useState<Tooth[]>();
     const [openModal, setOpenModal] = useState(false);
     const [saveModal, setSaveModal] = useState(false);
     // const [falseModal, setFalseModal] = useState(false);
@@ -47,7 +55,7 @@ const UploadFile = () => {
     const prepareSaveData = () => {
         if (listCropImg != null) {
             let tempList = listCropImg.map(tooth => ({
-                tooth_id: parseInt(tooth.tooth_id),
+                tooth_id: tooth.tooth_id,
                 name: "",
                 type_tooth: tooth.severity,
                 type_caries: tooth.carie_type,

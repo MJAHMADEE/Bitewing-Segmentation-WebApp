@@ -2,17 +2,28 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Dropdown from "./Dropdown";
 
+interface ToothDetails {
+    index: number | null;
+    imageUrl?: string;
+    details: string;
+    tooth_id: number | null;
+    numbering: string;
+    confidence: string;
+    carie_type: string;
+    severity: string;
+}
+
 interface DetailsModalProps {
     isOpen: boolean;
     imageUrl?: string; // Optional prop for image URL
-    data: object;
+    data: ToothDetails;
     onSave: () => void;
     onCancel: () => void;
     onDetailsChange: (details: string) => void;
     toothCariesType: string;
-    setCariesToothType: React.Dispatch<React.SetStateAction<string[] | null>>
+    setCariesToothType: React.Dispatch<React.SetStateAction<string>>
     toothCType: string;
-    setToothCType: React.Dispatch<React.SetStateAction<string[] | null>>
+    setToothCType: React.Dispatch<React.SetStateAction<string>>
 }
 
 const DetailsModal: React.FC<DetailsModalProps> = ({
