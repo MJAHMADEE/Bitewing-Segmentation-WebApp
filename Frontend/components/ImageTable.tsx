@@ -2,16 +2,26 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import DetailsModal from "./DetailsModal"; // Import the DetailsModal component
 
+interface Tooth {
+    tooth_id: number;
+    severity: string;
+    carie_type: string;
+    detail: string;
+    numbering: string;
+    image_file: string;
+    confidence: string;
+}
+
 interface ImageTableProps {
-    images: string[];
-    setListCropImg: React.Dispatch<React.SetStateAction<string[] | null>>
+    images: Tooth[];
+    setListCropImg: React.Dispatch<React.SetStateAction<Tooth[] | undefined>>
 }
 
 interface ToothDetails {
     index: number | null;
-    imageUrl?: string; // Include an imageUrl property
+    imageUrl?: string;
     details: string;
-    tooth_id: string;
+    tooth_id: number | null;
     numbering: string;
     confidence: string;
     carie_type: string;
@@ -26,7 +36,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
             index: null,
             details: "",
             imageUrl: "",
-            tooth_id: "",
+            tooth_id: null,
             numbering: "",
             confidence: "",
             carie_type: "",
@@ -51,7 +61,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
             index: index,
             details: images[index].detail || '',
             imageUrl: images[index].image_file || '',
-            tooth_id: images[index].tooth_id || '',
+            tooth_id: images[index].tooth_id,
             numbering: images[index].numbering || '' ,
             confidence: images[index].confidence || '',
             carie_type: images[index].carie_type || '',
@@ -63,19 +73,22 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
         setToothCType(currentToothDetails.severity)
         console.log("curr", currentToothDetails)
         console.log("all", images)
+
     };
 
     const saveToothDetails = (details: string) => {
         setCurrentToothDetails({ ...currentToothDetails, details });
         setDetailsModalOpen(false);
-
-        const imagesCopy = [...images]
-        imagesCopy[currentToothDetails.index] = {...imagesCopy[currentToothDetails.index],
-            carie_type: toothCariesType,
-            detail: currentToothDetails.details,
-            severity: toothCType,}
-        setListCropImg(imagesCopy)
-
+        if (currentToothDetails.index != null) {
+            const imagesCopy = [...images]
+            imagesCopy[currentToothDetails.index] = {
+                ...imagesCopy[currentToothDetails.index],
+                carie_type: toothCariesType,
+                detail: currentToothDetails.details,
+                severity: toothCType,
+            }
+            setListCropImg(imagesCopy)
+        }
         console.log("curr", currentToothDetails)
         console.log("all", images)
     };
