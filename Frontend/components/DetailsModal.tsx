@@ -48,13 +48,14 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                 <div className="flex flex-row">
                     {imageUrl && (
                         <div className="mb-4">
-                            <Image
+                            {/* <Image
                                 src={imageUrl}
                                 width={200}
                                 height={300}
                                 alt="Preview"
                                 className="max-h-60 rounded-md object-cover"
-                            />
+                            /> */}
+                            <img src={imageUrl} className="w-[200px]"/>
                         </div>
                     )}
                     <div className="flex flex-col ml-5 mb-5">

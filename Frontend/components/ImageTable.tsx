@@ -8,7 +8,7 @@ interface Tooth {
     carie_type: string;
     detail: string;
     numbering: string;
-    image_file: string;
+    image_url: string;
     confidence: string;
 }
 
@@ -60,7 +60,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepare
             setCurrentToothDetails({
                 index: index,
                 details: images[index].detail || '',
-                imageUrl: images[index].image_file || '',
+                imageUrl: images[index].image_url || '',
                 tooth_id: images[index].tooth_id,
                 numbering: images[index].numbering || '' ,
                 confidence: images[index].confidence || '',
@@ -135,13 +135,14 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepare
                                     onChange={(e) => onImageSelect(index, e.target.checked)}
                                     className="mr-2"
                                 />
-                                <Image
-                                    src={img.image_file}
+                                {/* <Image
+                                    src={img.image_url}
                                     alt="Tooth Preview"
                                     width={100}
                                     height={100}
                                     className="max-w-xs rounded-md"
-                                />
+                                /> */}
+                                <img src={img.image_url} className="w-[100px]"/>
                                 <div className="w-full ml-2">
                                     <h1 className="text-2xl font-bold mb-2">Class {img.numbering}</h1>
                                     <p>confidence: {img.confidence.substring(0, 5)}</p>
