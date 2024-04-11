@@ -305,7 +305,7 @@ export default function HistoryDashboard() {
                                                                 color="blue-gray"
                                                                 className="font-normal"
                                                             >
-                                                                {name}
+                                                                Patient ID : {name}
                                                             </Typography>
                                                             <Typography
                                                                 variant="small"

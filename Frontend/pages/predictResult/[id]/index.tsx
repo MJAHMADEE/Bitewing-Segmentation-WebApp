@@ -55,7 +55,7 @@ export default function PredictResult() {
                 setThumbnailImages(thumbnails);
 
                 setThumbnailImages(thumbnails);
-                setSelectedThumbDetail('Select a thumbnail to see more details.');
+                setSelectedThumbDetail('Select a tooth to see more details.');
 
             } catch (error) {
                 console.error("There was an error fetching the tooth data:", error);
@@ -77,7 +77,8 @@ export default function PredictResult() {
                     {mainImages.map(image => (
                         <img
                             key={image.id}
-                            src={image.imageUrl}
+                            // src={image.imageUrl}
+                            src={"http://localhost:8000/images/20240411-085351-overview.jpg"}
                             alt="Main Image"
                             className="cursor-pointer rounded-md"
                             onClick={() => setSelectedMainImage(image.id)}
@@ -89,7 +90,8 @@ export default function PredictResult() {
                         {thumbnailImages.map(image => (
                             <img
                                 key={image.id}
-                                src={image.imageUrl}
+                                // src={image.imageUrl}
+                                src={"http://localhost:8000/images/20240401-122453-15.jpg"}
                                 alt="Thumbnail"
                                 className="m-1 rounded-md cursor-pointer"
                                 onClick={() => setSelectedThumbDetail(image.details)}
