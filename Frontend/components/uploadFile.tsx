@@ -65,7 +65,7 @@ const UploadFile = () => {
       if (responseData.data.bitewing_file) {
         // Assuming `responseData.crop_img` is the base64 string of the cropped image
         // Convert base64 string to an image and set it for preview
-        setPreviewUrl(`data:image/jpeg;base64,${responseData.data.bitewing_file}`);
+        setPreviewUrl(`http://localhost:8000/images/${responseData.data.bitewing_url.split('/').pop()}`);
         // console.log(responseData.list_crop_img);
         if (Array.isArray(responseData.data.list_tooth)) {
           const formattedList = responseData.data.list_tooth.map((item: { image_file: string }) => `data:image/jpeg;base64,${item.image_file}`);
@@ -149,26 +149,28 @@ const UploadFile = () => {
               </p>
             </object>
           ) : selectedFile?.type === "image/tiff" ? (
-            <Image
-              src={previewUrl}
-              alt="TIFF Preview"
-              width={500}
-              height={500}
-              style={{
-                width: "auto",
-                height: "auto",
-                maxWidth: "500px",
-                maxHeight: "500px",
-              }}
-            />
+            // <Image
+            //   src={previewUrl}
+            //   alt="TIFF Preview"
+            //   width={500}
+            //   height={500}
+            //   style={{
+            //     width: "auto",
+            //     height: "auto",
+            //     maxWidth: "500px",
+            //     maxHeight: "500px",
+            //   }}
+            // />
+            <img src={previewUrl}/>
           ) : (
-            <Image
-              src={previewUrl}
-              width={500}
-              height={500}
-              alt="Preview"
-              className="mb-4 max-w-xs rounded-md"
-            />
+            // <Image
+            //   src={previewUrl}
+            //   width={500}
+            //   height={500}
+            //   alt="Preview"
+            //   className="mb-4 max-w-xs rounded-md"
+            // />
+            <img src={previewUrl}/>
           )}
         </div>
       )}
