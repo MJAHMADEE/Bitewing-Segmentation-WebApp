@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import ImageTable from "./ImageTable";
 import Loading from "./Loading";
@@ -51,9 +51,12 @@ const UploadFile = () => {
     const [previewUrls, setPreviewUrls] = useState<Array<{ file: File, url: string }> | null>(null);
     const [isFolderUpload, setIsFolderUpload] = useState(false);
 
+    useEffect(() => {
+        prepareSaveData()
+    },[localStorage.getItem("0temp")])
 
-    const prepareSaveData = () => {
-        if (listCropImg != null) {
+    const prepareSaveData = () =>{
+        if(listCropImg != null){
             let tempList = listCropImg.map(tooth => ({
                 tooth_id: tooth.tooth_id,
                 name: "",
@@ -63,7 +66,8 @@ const UploadFile = () => {
                 description: "",
                 treatment: tooth.detail
             }));
-            setSaveState({ ...saveState, list_tooth: tempList })
+            setSaveState({...saveState,list_tooth:tempList})
+            console.log(saveState)
         }
     }
 
@@ -280,7 +284,6 @@ const UploadFile = () => {
     const saveResult = async () => {
         let token = localStorage.getItem('token');
         prepareSaveData()
-        console.log(saveState)
         console.log(sid)
         try {
             const resp = await fetch("http://localhost:5000/v1/segmentation/" + sid, {
@@ -506,11 +509,12 @@ const UploadFile = () => {
             </div>
             {show && (
                 <div className="m-2">
-                    <ImageTable
-                        images={listCropImg ?? []}
-                        setListCropImg={setListCropImg}
-                    />
-                </div>
+                <ImageTable
+                    images={listCropImg ?? []}
+                    setListCropImg={setListCropImg}
+                    prepareSaveData={prepareSaveData}
+                />
+            </div>
             )}
 
         </div>
