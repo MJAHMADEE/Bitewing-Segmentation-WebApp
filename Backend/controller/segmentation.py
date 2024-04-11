@@ -57,11 +57,9 @@ async def crop(file: UploadFile = File(...)):
 
     image_path = data_path[0]
     image_path_crop = data_path[1]
-    img = Image.open(image_path_crop)
 
     response = dict(
         crop_img=image_path_crop,
-        crop_img_file=ImageService.image_to_base64(img),
         list_crop_img=image_path
     )   
     end_time = time.time()

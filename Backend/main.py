@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware 
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
 from config.database import postgres
 import uvicorn
@@ -37,6 +38,9 @@ def initialize_app():
         #get env variable
         return {"Hello": "World"}
     
+    app.mount("/images",StaticFiles(directory="./img"),name="images")
+
+
     from controller.segmentation import router as segmentation_router
     app.include_router(segmentation_router)
 
