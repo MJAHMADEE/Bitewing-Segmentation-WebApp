@@ -1,87 +1,151 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const EditPredictModal = ({ isOpen, onClose, onSave, initialData }) => {
-    const [listTooth, setListTooth] = useState(initialData.list_tooth || []);
+const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
+    const [localToothData, setLocalToothData] = useState({
+        toothId: '',
+        toothName: '',
+        toothType: '',
+        toothCariesType: '',
+        toothNumbering: '',
+        toothFiling: '',
+        toothPosition: '',
+        toothDescription: '',
+        toothTreatment: '',
+    });
 
-    const handleInputChange = (index, e) => {
+    useEffect(() => {
+        if (toothData) {
+            setLocalToothData(toothData);
+        }
+    }, [toothData]);
+
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
-        const updatedListTooth = listTooth.map((item, i) =>
-            i === index ? { ...item, [name]: value } : item
-        );
-        setListTooth(updatedListTooth);
+        setLocalToothData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
-    const handleSubmit = () => {
-        onSave({ list_tooth: listTooth });
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(localToothData);
         onClose();
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={onClose}>
+            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onClick={e => e.stopPropagation()}>
                 <h3 className="text-lg font-semibold">Edit Tooth Details</h3>
-                {listTooth.map((tooth, index) => (
-                    <div key={index} className="mt-4">
-                        <h4 className="font-semibold">Tooth ID: {tooth.tooth_id}</h4>
-                        <div className="space-y-2">
-                            <input
-                                type="text"
-                                name="name"
-                                value={tooth.name || ''}
-                                onChange={(e) => handleInputChange(index, e)}
-                                placeholder="Name"
-                                className="w-full mt-1 p-2 border rounded-md"
-                            />
-                            <input
-                                type="text"
-                                name="type_tooth"
-                                value={tooth.type_tooth || ''}
-                                onChange={(e) => handleInputChange(index, e)}
-                                placeholder="Type of Tooth"
-                                className="w-full mt-1 p-2 border rounded-md"
-                            />
-                            <input
-                                type="text"
-                                name="type_caries"
-                                value={tooth.type_caries || ''}
-                                onChange={(e) => handleInputChange(index, e)}
-                                placeholder="Type of Caries"
-                                className="w-full mt-1 p-2 border rounded-md"
-                            />
-                            <input
-                                type="text"
-                                name="filing"
-                                value={tooth.filing || ''}
-                                onChange={(e) => handleInputChange(index, e)}
-                                placeholder="Filing"
-                                className="w-full mt-1 p-2 border rounded-md"
-                            />
-                            <input
-                                type="text"
-                                name="description"
-                                value={tooth.description || ''}
-                                onChange={(e) => handleInputChange(index, e)}
-                                placeholder="Description"
-                                className="w-full mt-1 p-2 border rounded-md"
-                            />
-                            <input
-                                type="text"
-                                name="treatment"
-                                value={tooth.treatment || ''}
-                                onChange={(e) => handleInputChange(index, e)}
-                                placeholder="Treatment"
-                                className="w-full mt-1 p-2 border rounded-md"
-                            />
-                        </div>
+                <form onSubmit={handleSubmit}>
+                    <div className="mt-4">
+                        <label>Tooth ID:</label>
+                        <input
+                            type="text"
+                            name="toothId"
+                            value={localToothData.toothId || ''}
+                            onChange={handleInputChange}
+                            placeholder="Tooth ID"
+                            className="w-full mt-1 p-2 border rounded-md"
+                            readOnly
+                        />
                     </div>
-                ))}
+                    <div className="mt-4">
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            name="toothName"
+                            value={localToothData.toothName || ''}
+                            onChange={handleInputChange}
+                            placeholder="Name"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Type of Tooth:</label>
+                        <input
+                            type="text"
+                            name="toothType"
+                            value={localToothData.toothType || ''}
+                            onChange={handleInputChange}
+                            placeholder="Type of Tooth"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Type of Caries:</label>
+                        <input
+                            type="text"
+                            name="toothCariesType"
+                            value={localToothData.toothCariesType || ''}
+                            onChange={handleInputChange}
+                            placeholder="Type of Caries"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Numbering:</label>
+                        <input
+                            type="text"
+                            name="toothNumbering"
+                            value={localToothData.toothNumbering || ''}
+                            onChange={handleInputChange}
+                            placeholder="Numbering"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Filing:</label>
+                        <input
+                            type="text"
+                            name="toothFiling"
+                            value={localToothData.toothFiling || ''}
+                            onChange={handleInputChange}
+                            placeholder="Filing"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Position:</label>
+                        <input
+                            type="text"
+                            name="toothPosition"
+                            value={localToothData.toothPosition || ''}
+                            onChange={handleInputChange}
+                            placeholder="Position"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Description:</label>
+                        <input
+                            type="text"
+                            name="toothDescription"
+                            value={localToothData.toothDescription || ''}
+                            onChange={handleInputChange}
+                            placeholder="Description"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label>Treatment:</label>
+                        <input
+                            type="text"
+                            name="toothTreatment"
+                            value={localToothData.toothTreatment || ''}
+                            onChange={handleInputChange}
+                            placeholder="Treatment"
+                            className="w-full mt-1 p-2 border rounded-md"
+                        />
+                    </div>
 
-                <div className="flex justify-end mt-4">
-                    <button onClick={onClose} className="bg-red-500 text-white px-4 py-2 rounded-md mr-2">Cancel</button>
-                    <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
-                </div>
+                    <div className="flex justify-end mt-4">
+                        <button type="button" onClick={onClose} className="bg-red-500 text-white px-4 py-2 rounded-md mr-2">Cancel</button>
+                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     );

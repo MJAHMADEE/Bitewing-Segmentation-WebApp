@@ -2,15 +2,11 @@ import { SideBar } from "@/components/SideBar";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
-    Card,
     CardHeader,
-    Input,
     Typography,
     Button,
     CardBody,
     CardFooter,
-    Avatar,
-    IconButton,
     Tooltip,
 } from "@material-tailwind/react";
 import { motion } from 'framer-motion';
@@ -200,19 +196,6 @@ export default function HistoryDashboard() {
         fetchAllData();
     }, []);
 
-
-
-
-    // useEffect(() => {
-    //     if (TABLE_ROWS.length > 0) {
-    //         setCurrentUserDetails({
-    //             name: TABLE_ROWS[0].name,
-    //             email: TABLE_ROWS[0].email,
-    //             gender: TABLE_ROWS[0].gender,
-    //             phonenumber: TABLE_ROWS[0].phonenumber,
-    //         });
-    //     }
-    // }, [TABLE_ROWS]);
 
     useEffect(() => {
         // ตรวจสอบ token ใน localStorage

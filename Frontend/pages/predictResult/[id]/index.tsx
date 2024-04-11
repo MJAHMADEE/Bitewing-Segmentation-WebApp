@@ -4,6 +4,7 @@ import NavbarMobile from '@/components/NavbarMobile';
 import NavbarDesktop from '@/components/NavbarDesktop';
 import { useRouter } from 'next/router';
 import EditPredictModal from '@/components/EditPredictModal ';
+import { m } from 'framer-motion';
 
 export default function PredictResult() {
     const router = useRouter();
@@ -14,9 +15,18 @@ export default function PredictResult() {
     const [mainImages, setMainImages] = useState([]);
     const [thumbnailImages, setThumbnailImages] = useState([]);
     const [selectedToothId, setSelectedToothId] = useState(null);
+    const [toothId, setToothId] = useState('');
+    const [toothName, setToothName] = useState('');
+    const [toothType, setToothType] = useState('');
+    const [toothCariesType, setToothCariesType] = useState('');
+    const [toothNumbering, setToothNumbering] = useState('');
+    const [toothFiling, setToothFiling] = useState('');
+    const [toothPosition, setToothPosition] = useState('');
+    const [toothDescription, setToothDescription] = useState('');
+    const [toothTreatment, setToothTreatment] = useState('');
+
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editData, setEditData] = useState({});
 
     // Function to fetch data for a specific tooth
     const fetchToothData = async () => {
@@ -36,33 +46,36 @@ export default function PredictResult() {
 
                 const data = await response.json();
 
-                // Set the main image from the bitewing data
-                setMainImages([{ id: 'main', imageUrl: `${process.env.REACT_APP_BASE_URL}${data.data.bitewing.image}` }]);
 
+
+                // Set the main image from the bitewing data
+                setMainImages([{ id: 'main', imageUrl: `http://localhost:8000/images/${data.data.bitewing.image.split('/').pop()}` }]);
+                console.log(mainImages);
+
+                // setPreviewUrl(`http://localhost:8000/images/${responseData.data.bitewing_url.split('/').pop()}`);
                 // Map each list_tooth item to a thumbnail image
                 // Set thumbnail images
                 const thumbnails = data.data.list_tooth.map((tooth, index) => ({
                     id: `thumb${index + 1}`,
                     relatedTo: 'main',
-                    imageUrl: `${process.env.REACT_APP_BASE_URL}${tooth.image}`,
-                    details: `
-                        ID: ${tooth.id}
-                        Name: ${tooth.name || 'N/A'}
-                        Type of Tooth: ${tooth.type_tooth || 'N/A'}
-                        Type of Caries: ${tooth.type_caries || 'N/A'}
-                        Numbering: ${tooth.numbering || 'N/A'}
-                        Filling: ${tooth.filing || 'N/A'}
-                        Position: ${tooth.position || 'N/A'}
-                        Description: ${tooth.description || 'N/A'}
-                        Treatment: ${tooth.treatment || 'N/A'}
-                            `.trim(),
-                    toothId: tooth.id,
+                    imageUrl: `http://localhost:8000/images/${tooth.image.split('/').pop()}`,
+                    toothData: {
+                        toothId: tooth.id,
+                        name: tooth.name,
+                        typeTooth: tooth.type_tooth,
+                        typeCaries: tooth.type_caries,
+                        numbering: tooth.numbering,
+                        filing: tooth.filing,
+                        position: tooth.position,
+                        description: tooth.description,
+                        treatment: tooth.treatment,
+                    },
                 }));
 
                 setThumbnailImages(thumbnails);
 
                 setThumbnailImages(thumbnails);
-                console.log(data.data.list_tooth.id);
+                console.log(thumbnails);
                 setSelectedThumbDetail('Select a tooth to see more details.');
 
             } catch (error) {
@@ -71,9 +84,29 @@ export default function PredictResult() {
         }
     };
 
-    const handleSaveEdit = async (updatedData) => {
-        console.log("Saving data", updatedData);
+    const handleSaveEdit = async (toothData) => {
+        console.log("Saving data", toothData);
         const token = localStorage.getItem('token');
+
+        // สร้าง body ข้อมูลที่ต้องการส่ง
+        const updatedData = {
+            description: "des1", // หรือข้อมูลที่ต้องการจาก state หรือ context
+            treatment: "treat", // หรือข้อมูลที่ต้องการจาก state หรือ context
+            list_tooth: [
+                {
+                    tooth_id: toothData.toothId,
+                    name: toothData.toothName,
+                    type_tooth: toothData.toothType,
+                    type_caries: toothData.toothCariesType,
+                    numbering: toothData.toothNumbering,
+                    filing: toothData.toothFiling,
+                    position: toothData.toothPosition,
+                    description: toothData.toothDescription,
+                    treatment: toothData.toothTreatment
+                }
+                // เพิ่มเติม object อื่นๆ หากมีการแก้ไขข้อมูลหลายฟันในครั้งเดียว
+            ]
+        };
 
         try {
             const response = await fetch(`http://localhost:5000/v1/segmentation/${id}`, {
@@ -96,21 +129,24 @@ export default function PredictResult() {
         }
     };
 
+
+    // This function will be called with the selected tooth ID
     const openEditModal = (toothId) => {
-        if (toothId) {
-            const toothData = thumbnailImages.find(image => image.toothId === toothId);
-            setEditData({
-                id: toothData.toothId,
-                name: toothData.name,
-                type_tooth: toothData.type_tooth,
-                type_caries: toothData.type_caries,
-                filing: toothData.filing,
-                description: toothData.description,
-                treatment: toothData.treatment,
-            });
+        const toothData = thumbnailImages.find(image => image.toothData.toothId === toothId);
+        if (toothData) {
+            setToothId(toothData.toothData.toothId);
+            setToothName(toothData.toothData.name);
+            setToothType(toothData.toothData.typeTooth);
+            setToothCariesType(toothData.toothData.typeCaries);
+            setToothNumbering(toothData.toothData.numbering);
+            setToothFiling(toothData.toothData.filing);
+            setToothPosition(toothData.toothData.position);
+            setToothDescription(toothData.toothData.description);
+            setToothTreatment(toothData.toothData.treatment);
             setIsEditModalOpen(true);
         }
     };
+
 
     useEffect(() => {
         fetchToothData();
@@ -122,7 +158,17 @@ export default function PredictResult() {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSave={handleSaveEdit}
-                initialData={editData}
+                toothData={{
+                    toothId,
+                    toothName,
+                    toothType,
+                    toothCariesType,
+                    toothNumbering,
+                    toothFiling,
+                    toothPosition,
+                    toothDescription,
+                    toothTreatment
+                }}
             />
             <Transition />
             <div className="block md:hidden"><NavbarMobile /></div>
@@ -132,8 +178,7 @@ export default function PredictResult() {
                     {mainImages.map(image => (
                         <img
                             key={image.id}
-                            // src={image.imageUrl}
-                            src={"http://localhost:8000/images/20240411-085351-overview.jpg"}
+                            src={image.imageUrl}
                             alt="Main Image"
                             className="cursor-pointer rounded-md"
                             onClick={() => setSelectedMainImage(image.id)}
@@ -145,13 +190,22 @@ export default function PredictResult() {
                         {thumbnailImages.map(image => (
                             <img
                                 key={image.id}
-                                // src={image.imageUrl}
-                                src={"http://localhost:8000/images/20240401-122453-15.jpg"}
+                                src={image.imageUrl}
+                                // src={"http://localhost:8000/images/20240401-122453-15.jpg"}
                                 alt="Thumbnail"
                                 className="m-1 rounded-md cursor-pointer"
                                 onClick={() => {
-                                    setSelectedThumbDetail(image.details)
-                                    setSelectedToothId(image.toothId);
+                                    setToothId(image.toothData.toothId);
+                                    setToothName(image.toothData.name || 'N/A');
+                                    setToothType(image.toothData.typeTooth || 'N/A');
+                                    setToothCariesType(image.toothData.typeCaries || 'N/A');
+                                    setToothNumbering(image.toothData.numbering || 'N/A');
+                                    setToothFiling(image.toothData.filing || 'N/A');
+                                    setToothPosition(image.toothData.position || 'N/A');
+                                    setToothDescription(image.toothData.description || 'N/A');
+                                    setToothTreatment(image.toothData.treatment || 'N/A');
+                                    setSelectedToothId(image.toothData.toothId)
+                                    console.log(image.toothData.toothId);
                                 }}
                                 style={{ width: '100px', height: '100px' }}
 
@@ -160,7 +214,17 @@ export default function PredictResult() {
                     </div>
                     <div className="mt-5 bg-white text-black p-4 rounded-md shadow-md">
                         <h3 className="font-bold">Details:</h3>
-                        <pre>{selectedThumbDetail}</pre>
+                        <div>
+                            <p>ID: {toothId}</p>
+                            <p>Name: {toothName}</p>
+                            <p>Type of Tooth: {toothType}</p>
+                            <p>Type of Caries: {toothCariesType}</p>
+                            <p>Numbering: {toothNumbering}</p>
+                            <p>Filing: {toothFiling}</p>
+                            <p>Position: {toothPosition}</p>
+                            <p>Description: {toothDescription}</p>
+                            <p>Treatment: {toothTreatment}</p>
+                        </div>
                     </div>
                     <div>
                         <button
