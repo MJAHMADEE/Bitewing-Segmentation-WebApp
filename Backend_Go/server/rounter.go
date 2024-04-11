@@ -79,10 +79,10 @@ func (s *echoServer) initializeSegmentationHttpHandler() {
 	segmentationRouters := s.app.Group("v1/segmentation")
 
 	segmentationRouters.Use(TokenAuthentication(dentistRepositoryForAuth(s)))
-	segmentationRouters.PUT("/:id", segmentationHttpHandler.SaveResult)
+	segmentationRouters.PUT("/", segmentationHttpHandler.SaveResult)
 	segmentationRouters.GET("/", segmentationHttpHandler.GetResults)
-	segmentationRouters.GET("/:id", segmentationHttpHandler.GetDetailResult)
-	segmentationRouters.DELETE("/:id", segmentationHttpHandler.DeleteResult)
+	segmentationRouters.GET("/", segmentationHttpHandler.GetDetailResult)
+	segmentationRouters.DELETE("/", segmentationHttpHandler.DeleteResult)
 
 }
 
