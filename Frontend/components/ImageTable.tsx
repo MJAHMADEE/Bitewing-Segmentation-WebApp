@@ -14,7 +14,8 @@ interface Tooth {
 
 interface ImageTableProps {
     images: Tooth[];
-    setListCropImg: React.Dispatch<React.SetStateAction<Tooth[] | undefined>>
+    setListCropImg: React.Dispatch<React.SetStateAction<Tooth[] | undefined>>;
+    prepareSaveData: () => void;
 }
 
 interface ToothDetails {
@@ -28,7 +29,7 @@ interface ToothDetails {
     severity: string;
 }
 
-const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
+const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepareSaveData }) => {
     const [selectedImages, setSelectedImages] = useState<boolean[]>(Array(images.length).fill(false));
     const [detailsModalOpen, setDetailsModalOpen] = useState(false);
     const [currentToothDetails, setCurrentToothDetails] = useState<ToothDetails>(
@@ -50,33 +51,55 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
         setSelectedImages(Array(images.length).fill(false));
     }, [images]);
 
+    useEffect(() => {
+        let indexStr = localStorage.getItem("index");
+        let index: number | null = null;
+        if(indexStr != null){
+            index = parseInt(indexStr,10);
+            console.log(index)
+            setCurrentToothDetails({
+                index: index,
+                details: images[index].detail || '',
+                imageUrl: images[index].image_file || '',
+                tooth_id: images[index].tooth_id,
+                numbering: images[index].numbering || '' ,
+                confidence: images[index].confidence || '',
+                carie_type: images[index].carie_type || '',
+                severity: images[index].severity || ''
+            });
+            setCariesToothType(currentToothDetails.carie_type)
+            setToothCType(currentToothDetails.severity)
+        }
+        
+    },[localStorage.getItem("index")])
+
     const onImageSelect = (index: number, checked: boolean) => {
         const newSelectedImages = [...selectedImages];
         newSelectedImages[index] = checked;
         setSelectedImages(newSelectedImages);
     };
 
-    const openDetailsModal = (index: number) => {
-        setCurrentToothDetails({
-            index: index,
-            details: images[index].detail || '',
-            imageUrl: images[index].image_file || '',
-            tooth_id: images[index].tooth_id,
-            numbering: images[index].numbering || '',
-            confidence: images[index].confidence || '',
-            carie_type: images[index].carie_type || '',
-            severity: images[index].severity || ''
-        });
+    const openDetailsModal = (index: number) => { 
+        // setCariesToothType(currentToothDetails.carie_type)
+        // setToothCType(currentToothDetails.severity)
+        // setCurrentToothDetails({
+        //     index: index,
+        //     details: images[index].detail || '',
+        //     imageUrl: images[index].image_file || '',
+        //     tooth_id: images[index].tooth_id,
+        //     numbering: images[index].numbering || '' ,
+        //     confidence: images[index].confidence || '',
+        //     carie_type: images[index].carie_type || '',
+        //     severity: images[index].severity || ''
+        // });
         localStorage.setItem("index", index.toString())
-        setDetailsModalOpen(true);
-        setCariesToothType(currentToothDetails.carie_type)
-        setToothCType(currentToothDetails.severity)
+        localStorage.setItem("0temp", "0")
         console.log("curr", currentToothDetails)
         console.log("all", images)
-
+        setDetailsModalOpen(true);
     };
 
-    const saveToothDetails = (details: string) => {
+    const saveToothDetails = async (details: string) => {
         setCurrentToothDetails({ ...currentToothDetails, details });
         setDetailsModalOpen(false);
         if (currentToothDetails.index != null) {
@@ -88,11 +111,17 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
                 severity: toothCType,
             }
             setListCropImg(imagesCopy)
+            localStorage.setItem("0temp", "1")
         }
+        prepareSaveData()
         console.log("curr", currentToothDetails)
         console.log("all", images)
     };
 
+    const handleOnCancel = () => {
+        setDetailsModalOpen(false)
+        localStorage.setItem("0temp", "1")
+    }
     return (
         <div className="w-full h-[80vh] text-white pr-2 overflow-y-scroll">
             <div className="">
@@ -136,7 +165,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg }) => {
                         toothCType={toothCType}
                         setToothCType={setToothCType}
                         onSave={() => saveToothDetails(currentToothDetails.details)}
-                        onCancel={() => setDetailsModalOpen(false)}
+                        onCancel={() => handleOnCancel()}
                         onDetailsChange={(details) => setCurrentToothDetails({ ...currentToothDetails, details })}
                     />
                 )}
