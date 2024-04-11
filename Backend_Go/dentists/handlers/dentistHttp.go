@@ -20,7 +20,7 @@ func NewDentistHttpHandler(dentistUsecase usecases.DentistUsecase) DentistHandle
 }
 
 func (h *dentistHttpHandler) GetDentistById(c echo.Context) error {
-	dentistId := c.Param("id")
+	dentistId := c.Get("dentistId").(string)
 	if err := h.dentistUsecase.CheckDentistId(&dentistId); err != nil {
 		log.Errorf("Error validating request body: %v", err)
 		if _, ok := err.(*dentistError.ServerInternalError); ok {
@@ -55,7 +55,7 @@ func (h *dentistHttpHandler) GetDentistAll(c echo.Context) error {
 }
 
 func (h *dentistHttpHandler) UpdateDentist(c echo.Context) error {
-	dentistId := c.Param("id")
+	dentistId := c.Get("dentistId").(string)
 	reqBody := new(models.UpdateModel)
 	if err := c.Bind(reqBody); err != nil {
 		log.Errorf("Error binding request body: %v", err)
@@ -86,7 +86,7 @@ func (h *dentistHttpHandler) UpdateDentist(c echo.Context) error {
 }
 
 func (h *dentistHttpHandler) DeleteDentist(c echo.Context) error {
-	dentistId := c.Param("id")
+	dentistId := c.Get("dentistId").(string)
 	if err := h.dentistUsecase.CheckDentistId(&dentistId); err != nil {
 		log.Errorf("Error validating request body: %v", err)
 		if _, ok := err.(*dentistError.ServerInternalError); ok {
