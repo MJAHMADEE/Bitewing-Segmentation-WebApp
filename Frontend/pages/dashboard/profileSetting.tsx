@@ -21,20 +21,7 @@ export default function ProfileSetting() {
     const [openUpdate, setOpenUpdate] = useState(false);
 
     // Handle form submission
-    const handleSubmit = (e: any) => {
-        e.preventDefault();
 
-    // const userData = {
-    //     "first_name":firstname,
-    //     "last_name":lastname,
-    //     "gender":"male",
-    //     "start_date":"2024-02-15",
-    //     "year_ext":8
-    // }
-
-        console.log("Submitted: ", { firstname, lastname, hostpital, email, password });
-
-    };
 
     // Handle profile image change
     const handleImageChange = (e: any) => {
@@ -44,6 +31,89 @@ export default function ProfileSetting() {
             setPreviewImage(URL.createObjectURL(file));
         }
     };
+
+    const updateDentist = async () => {
+        const token = localStorage.getItem("token"); // สมมติว่าคุณเก็บ token ไว้ใน localStorage
+        // const dentistId = "yourDentistId"; // ต้องเปลี่ยนเป็น ID ของ dentist ที่ต้องการอัปเดต
+
+        const requestBody = {
+            first_name: firstname,
+            last_name: lastname,
+            gender: "male", // หรือใช้ตัวแปรสำหรับเก็บเพศ ถ้ามี
+            start_date: "2024-02-15", // สมมติว่าคุณใช้ค่าตายตัว หรือคุณสามารถใช้ตัวแปรได้
+            year_ext: 8, // หรือตัวแปรสำหรับเก็บปีที่ขยาย
+        };
+        // http://localhost:5000/v1/dentist/${dentistId}
+        try {
+            const response = await fetch(`http://localhost:5000/v1/dentist/4`, {
+                method: 'PUT', // หรือ PATCH ขึ้นอยู่กับวิธีที่ backend รองรับ
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // ถ้าอัปเดตสำเร็จ
+                console.log('Dentist updated successfully:', data);
+                setOpenUpdate(false); // ปิด modal หลังจากอัปเดตสำเร็จ
+                // อาจจะมีการเปลี่ยนหน้าหรือแสดงข้อความสำเร็จที่นี่
+            } else {
+                // แสดงข้อผิดพลาดจากเซิร์ฟเวอร์
+                console.error('Failed to update dentist:', data);
+            }
+        } catch (error) {
+            console.error('Failed to send request:', error);
+        }
+    };
+
+    // ใช้งาน function updateDentist ใน handleSubmit
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+        updateDentist(); // อัปเดตข้อมูลของ dentist
+    };
+
+    const fetchDentistData = async () => {
+        const token = localStorage.getItem("token"); // สมมติว่าคุณเก็บ token ไว้ใน localStorage
+        const dentistId = 4; // ID ของ dentist ที่ต้องการดึงข้อมูล
+
+        // http://localhost:5000/v1/dentist/${dentistId}
+        try {
+            const response = await fetch(`http://localhost:5000/v1/dentist/4`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // ถ้าการดึงข้อมูลสำเร็จ
+                console.log('Dentist data fetched successfully:', result.data);
+                // อัปเดต state ด้วยข้อมูลที่ได้
+                setFirstname(result.data.first_name);
+                setLastname(result.data.last_name);
+                setEmail(result.data.username);
+                setHospital(result.data.hospital_name || ''); // หรือการจัดการกับ null ต่างๆ
+                // ตั้งค่าอื่นๆตามที่ต้องการ
+            } else {
+                // แสดงข้อผิดพลาดจากเซิร์ฟเวอร์
+                console.error('Failed to fetch dentist data:', result.message);
+            }
+        } catch (error) {
+            console.error('Failed to send request:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDentistData();
+    }, []); // ดึงข้อมูลเมื่อ component ถูก mount
+
+
 
     useEffect(() => {
         // ตรวจสอบ token ใน localStorage
@@ -58,14 +128,14 @@ export default function ProfileSetting() {
 
     return (
         <div className="w-full h-screen">
-            <Modal
+            {/* <Modal
                 isOpen={openUpdate}
                 setIsOpen={setOpenUpdate}
                 title="Log Out"
                 message="Are you sure you want to log out?"
                 onUnderstood={() => router.push('/dashboard')}
                 status={"success"}
-            />
+            /> */}
 
             <div className="bg-gradient-background h-full flex items-center justify-between">
                 <SideBar />
@@ -121,7 +191,7 @@ export default function ProfileSetting() {
                         </div>
                         {/* Submit Button */}
                         <div>
-                            <button onClick={() => setOpenUpdate(true)} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <button onClick={() => updateDentist()} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Update Profile
                             </button>
                         </div>

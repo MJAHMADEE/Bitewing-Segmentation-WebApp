@@ -10,11 +10,11 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ options, selectedOption, onOptionChange }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    useEffect(() => {
-        if (!selectedOption && options.length > 0) {
-            onOptionChange(options[0]);
-        }
-    }, [options, selectedOption, onOptionChange]);
+    // useEffect(() => {
+    //     if (!selectedOption && options.length > 0) {
+    //         onOptionChange(options[0]);
+    //     }
+    // }, [options, selectedOption, onOptionChange]);
 
     const dropdownVariants = {
         hidden: {

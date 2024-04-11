@@ -391,7 +391,7 @@ const UploadFile = () => {
                             className="mb-4 block w-full px-4 py-2 text-sm text-gray-700 bg-indigo-300 0 rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                             accept="image/png, image/jpeg, image/tiff, application/pdf"
                         />
-                        <button
+                        {/* <button
                             onClick={() => {
                                 setIsFolderUpload(true)
                                 setPreviewUrl(null)
@@ -400,11 +400,11 @@ const UploadFile = () => {
                             className="mb-2 text-white bg-blue-500 hover:bg-blue-700 rounded-md px-4 py-2 w-full"
                         >
                             Switch to Folder Upload
-                        </button>
+                        </button> */}
                     </div>
                 )}
 
-                {listFullCropImg && (
+                {/* {listFullCropImg && (
                     <div className="flex flex-row">
                         {listFullCropImg.map((img, index) => (
                             <div key={index} className="p-2">
@@ -412,9 +412,9 @@ const UploadFile = () => {
                             </div>
                         ))}
                     </div>
-                )}
+                )} */}
 
-                {isFolderUpload && (
+                {/* {isFolderUpload && (
                     <>
                         <div>
                             <h1 className="text-white text-center mb-2">Upload Folder</h1>
@@ -427,7 +427,7 @@ const UploadFile = () => {
                             Switch to Single File Upload
                         </button>
                     </>
-                )}
+                )} */}
 
                 {previewUrl && (
                     <div className="preview-container" style={{ overflow: "auto" }}>
@@ -461,13 +461,13 @@ const UploadFile = () => {
                                 className="sm:w-300 sm:h-300 w-700 h-700 max-w-700 rounded-xl"
                             />
                         )}
-                        {
+                        {/* {
                             listFullCropImg.map((img, index) => (
                                 <div key={index} className="p-2">
                                     <img src={img.url} alt={`Cropped image ${index}`} className="w-24 h-24 object-cover" />
                                 </div>
                             ))
-                        }
+                        } */}
                     </div>
                 )}
                 {showUpload && (
