@@ -63,6 +63,7 @@ func (u *resultUsecaseImpl) GetDetailResult(resultId *string) (*models.Segmentat
 			Name:        tooth.Name,
 			TypeTooth:   tooth.TypeTooth,
 			TypeCaries:  tooth.TypeCaries,
+			Numbering:   tooth.Numbering,
 			Filing:      tooth.Filing,
 			Position:    tooth.Position,
 			Description: tooth.Description,
