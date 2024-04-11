@@ -45,7 +45,7 @@ func (s *echoServer) initializeDentistHttpHandler() {
 	dentistRouters.Use(TokenAuthentication(dentistPosgresRepository))
 	dentistRouters.PUT("/", dentistHttpHandler.UpdateDentist)
 	dentistRouters.GET("/", dentistHttpHandler.GetDentistById)
-	dentistRouters.GET("/", dentistHttpHandler.GetDentistAll)
+	dentistRouters.GET("/all", dentistHttpHandler.GetDentistAll)
 	dentistRouters.DELETE("/", dentistHttpHandler.DeleteDentist)
 }
 
