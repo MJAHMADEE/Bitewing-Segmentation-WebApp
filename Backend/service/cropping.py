@@ -72,15 +72,12 @@ class CroppingService:
             classname = classNames[int(cls)]
 
             cv2.imwrite(f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg', cropped)
-            img = Image.open(f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg')
             
             data_tooth = {
                 "position": f"[{x1},{y1}],[{x2},{y2}]",
                 "confidence": str(confidence),
                 "numbering": classname,
                 "image_path": f'{parent_directory}/img' + f'/{img_name}-{classname}' + '.jpg',
-                "image_file": ImageService.image_to_base64(img)
-                
             }
             img_path_list.append(data_tooth)
         for (bbox_xyxy, cls) in zip(bbox_xyxys, labels):

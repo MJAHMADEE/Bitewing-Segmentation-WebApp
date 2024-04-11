@@ -4,6 +4,7 @@ import ImageTable from "./ImageTable";
 import Loading from "./Loading";
 import Modal from "./Modal";
 import { UsersIcon } from "@heroicons/react/24/solid";
+import FolderUploadComponent from "./FolderUploadComponent";
 
 interface Tooth {
     tooth_id: number;
@@ -17,18 +18,18 @@ interface Tooth {
 
 interface listToothSave {
     tooth_id: number;
-    name:string;
-    type_tooth:string;
-    type_caries:string;
-    filing:string;
-    description:string;
-    treatment:string;
+    name: string;
+    type_tooth: string;
+    type_caries: string;
+    filing: string;
+    description: string;
+    treatment: string;
 }
 
 interface save {
-    description:string,
-    treatment:string,
-    list_tooth:listToothSave[]
+    description: string,
+    treatment: string,
+    list_tooth: listToothSave[]
 }
 
 const UploadFile = () => {
@@ -37,7 +38,7 @@ const UploadFile = () => {
     const [listCropImg, setListCropImg] = useState<Tooth[]>();
     const [openModal, setOpenModal] = useState(false);
     const [saveModal, setSaveModal] = useState(false);
-    const [falseModal, setFalseModal] = useState(false);
+    // const [falseModal, setFalseModal] = useState(false);
     const [modelFail, setModelFail] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [patientId, setPatientId] = useState('');
@@ -47,6 +48,8 @@ const UploadFile = () => {
     const [showUpload, setShowUpload] = useState(false);
     const [sid, setSid] = useState(null)
     const [saveState, setSaveState] = useState<save>({ description: "", treatment: "", list_tooth: [] });
+    const [previewUrls, setPreviewUrls] = useState<Array<{ file: File, url: string }> | null>(null);
+    const [isFolderUpload, setIsFolderUpload] = useState(false);
 
     useEffect(() => {
         prepareSaveData()
@@ -61,24 +64,33 @@ const UploadFile = () => {
                 type_caries: tooth.carie_type,
                 filing: "",
                 description: "",
-                treatment: tooth.detail 
+                treatment: tooth.detail
             }));
             setSaveState({...saveState,list_tooth:tempList})
             console.log(saveState)
         }
     }
-    
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files ? event.target.files[0] : null;
-        setSelectedFile(file);
 
-        if (file) {
-            // Immediately convert the file to a URL and set it for preview   const fileType = file.type;
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, isFolder: boolean) => {
+        const files = event.target.files ? Array.from(event.target.files) : [];
 
-            const url = URL.createObjectURL(file);
-            setPreviewUrl(url);
+        if (isFolder) {
+            const imageFiles = files.map(file => {
+                const url = URL.createObjectURL(file);
+                return { file, url };
+            });
+
+            setPreviewUrls(imageFiles);
+            setSelectedFile(null); // Reset single file upload
         } else {
-            setPreviewUrl(null);
+            const file = files[0];
+            setSelectedFile(file);
+
+            if (file) {
+                const url = URL.createObjectURL(file);
+                setPreviewUrl(url);
+                setPreviewUrls(null); // Reset folder upload
+            }
         }
     };
 
@@ -95,123 +107,163 @@ const UploadFile = () => {
         const dob = new Date(birthOfDate)
         let a = today.getFullYear() - dob.getFullYear();
         let token = localStorage.getItem('token')
-        
+
         const data = JSON.stringify({
-            "age":a,
-            "birth_date":birthOfDate.toString(),
-            "gender":gender
+            "age": a,
+            "birth_date": birthOfDate.toString(),
+            "gender": gender
         })
         console.log(data)
 
-        if(birthOfDate != '' && gender != ''){
-            try{
-                const res = await fetch("http://localhost:5000/v1/patient/",{
+        if (birthOfDate != '' && gender != '') {
+            try {
+                const res = await fetch("http://localhost:5000/v1/patient/", {
                     method: "POST",
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                body: data,
+                    body: data,
                 })
 
                 const resdata = await res.json()
                 console.log(resdata)
-                if(resdata.message == 'Patient created'){
+                if (resdata.message == 'Patient created') {
                     await getLastPatient()
                     setShowUpload(true)
                 }
             }
-            catch(error){
+            catch (error) {
 
             }
         }
-        else{
+        else {
             alert("fill")
         }
     }
 
     const getLastPatient = async () => {
         let token = localStorage.getItem('token')
-        try{
-            const res = await fetch("http://localhost:5000/v1/patient/",{
+        try {
+            const res = await fetch("http://localhost:5000/v1/patient/", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
             })
-            const resdata= await res.json()
+            const resdata = await res.json()
             setPatientId(resdata.data[resdata.data.length - 1].patient_id)
             console.log(patientId)
         }
-        catch(error){
+        catch (error) {
         }
     }
 
     const handleUpload = async () => {
-
-        if (!selectedFile) {
-            setIsLoading(false);
-            setFalseModal(true);
-            return;
-        }
         setIsLoading(true);
-
-        const formData = new FormData();
         let token = localStorage.getItem('token');
-        formData.append("patient_id", patientId);
-        formData.append("file", selectedFile);
-        
-        try {
-            const response = await fetch("http://127.0.0.1:8000/api/segmentation/crop", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            });
 
-            if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
+        // If it's a folder upload, loop through all files and post them one by one
+        if (isFolderUpload && previewUrls) {
+
+            setListFullCropImg([]);
+            for (const fileData of previewUrls) {
+                const formData = new FormData();
+                formData.append("patient_id", patientId);
+                formData.append("file", fileData.file); // Assuming `fileData.file` is the actual File object
+
+                try {
+                    const response = await fetch("http://127.0.0.1:8000/api/segmentation/crop", {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Server responded with ${response.status}`);
+                    }
+
+                    const responseData = await response.json();
+                    // Process each response
+                    console.log(responseData);
+                    setListFullCropImg(prevList => [
+                        ...prevList,
+                        { url: responseData.url || `data:image/jpeg;base64,${responseData.data.bitewing_file}` }
+                    ]);
+                    // Here you may want to update state with each image result
+                    // ...
+
+
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    setModelFail(true);
+                    // Decide if you want to continue or break the loop on error
+                    break;
+                }
+            }
+            setIsLoading(false);
+
+        } else if (selectedFile) {
+            // If it's a single file upload, do the usual single file post
+            const formData = new FormData();
+            formData.append("patient_id", patientId);
+            formData.append("file", selectedFile);
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/segmentation/crop", {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
+
+
+                const responseData = await response.json();
+                if (responseData.data.bitewing_file) {
+                    // Assuming `responseData.crop_img` is the base64 string of the cropped image
+                    // Convert base64 string to an image and set it for preview
+                    setPreviewUrl(`data:image/jpeg;base64,${responseData.data.bitewing_file}`);
+                    // console.log(responseData.list_crop_img);
+                    if (Array.isArray(responseData.data.list_tooth)) {
+                        const formattedList = await responseData.data.list_tooth.map((item: { numbering: string; confidence: string; image_file: string; tooth_id: string }) => ({
+                            tooth_id: item.tooth_id,
+                            numbering: item.numbering,
+                            confidence: item.confidence,
+                            image_file: `data:image/jpeg;base64,${item.image_file}`,
+                            carie_type: 'NONE',
+                            severity: 'NONE',
+                            detail: ''
+                        }));
+                        console.log(formattedList)
+                        setSid(responseData.data.segmentation_id)
+                        setListCropImg(formattedList);
+                    }
+                    setShow(true)
+                    console.log(listCropImg)
+
+                }
+            } catch (error) {
+                setIsLoading(false);
+                setModelFail(true);
+            } finally {
+                setIsLoading(false);
             }
 
-            const responseData = await response.json();
-            if (responseData.data.bitewing_file) {
-              // Assuming `responseData.crop_img` is the base64 string of the cropped image
-              // Convert base64 string to an image and set it for preview
-              setPreviewUrl(`data:image/jpeg;base64,${responseData.data.bitewing_file}`);
-              // console.log(responseData.list_crop_img);
-              if (Array.isArray(responseData.data.list_tooth)) {
-                const formattedList = await responseData.data.list_tooth.map((item: { numbering: string; confidence: string; image_file: string; tooth_id: string}) => ({
-                    tooth_id: item.tooth_id,
-                    numbering: item.numbering,
-                    confidence: item.confidence,
-                    image_file: `data:image/jpeg;base64,${item.image_file}`,
-                    carie_type: 'NONE',
-                    severity: 'NONE',
-                    detail: ''
-                }));
-                console.log(formattedList)
-                setSid(responseData.data.segmentation_id)
-                setListCropImg(formattedList);
-              }
-              setShow(true)
-              console.log(listCropImg)
-      
+            try {
+
             }
-        } catch (error) {
-            setIsLoading(false);
-            setModelFail(true);
-        } finally {
-            setIsLoading(false);
-        }
+            catch (error) {
 
-        try{
-
-        }
-        catch(error){
-
-        }
-    };
+            }
+        };
+    }
 
     const downloadCroppedImage = () => {
         if (previewUrl) {
@@ -233,8 +285,8 @@ const UploadFile = () => {
         let token = localStorage.getItem('token');
         prepareSaveData()
         console.log(sid)
-        try{
-            const resp = await fetch("http://localhost:5000/v1/segmentation/"+sid,{
+        try {
+            const resp = await fetch("http://localhost:5000/v1/segmentation/" + sid, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -243,18 +295,18 @@ const UploadFile = () => {
                 body: JSON.stringify(saveState)
             })
             const responseData = await resp.json();
-            if(responseData.message == "Success"){
+            if (responseData.message == "Success") {
                 alert("saved")
             }
         }
-        catch(error){
+        catch (error) {
 
         }
     }
 
     return (
-        
-        <div className="sm:w-800 flex flex-row bg-indigo-600 rounded-lg shadow-md p-4 mt-24">
+
+        <div className="sm:w-800 flex flex-row bg-indigo-600 rounded-lg shadow-md p-4 mt-24 h-full">
             <div className="m-2">
                 {!showUpload && (
                     <div className="flex flex-row items-center justify-center text-white mb-4">
@@ -282,7 +334,7 @@ const UploadFile = () => {
                         >SAVE</button>
 
                     </div >)}
-    
+
                 <div>
                     <Modal
                         isOpen={openModal}
@@ -302,14 +354,14 @@ const UploadFile = () => {
                         status={"info"}
                     />
 
-                    <Modal
+                    {/* <Modal
                         isOpen={falseModal}
                         setIsOpen={setFalseModal}
                         title="Fail to predict"
                         message="Make sure you have selected a file."
                         onUnderstood={() => setFalseModal(false)}
                         status={"fail"}
-                    />
+                    /> */}
 
                     <Modal
                         isOpen={modelFail}
@@ -321,7 +373,7 @@ const UploadFile = () => {
                     />
                 </div>
 
-                {showUpload && (
+                {/* {showUpload && (
                     <input
                         type="file"
                         onChange={handleFileChange}
@@ -329,8 +381,57 @@ const UploadFile = () => {
                         accept="image/png, image/jpeg, image/tiff, application/pdf"
                     />
 
+                )} */}
+
+                {showUpload && !isFolderUpload && (
+                    <div className="flex flex-col justify-center items-center w-full">
+                        <div>
+                            <h1 className="text-white text-center mb-2">Upload Single File</h1>
+                        </div>
+                        <input
+                            type="file"
+                            onChange={(e) => handleFileChange(e, false)}
+                            className="mb-4 block w-full px-4 py-2 text-sm text-gray-700 bg-indigo-300 0 rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            accept="image/png, image/jpeg, image/tiff, application/pdf"
+                        />
+                        {/* <button
+                            onClick={() => {
+                                setIsFolderUpload(true)
+                                setPreviewUrl(null)
+                                setListCropImg(null)
+                            }}
+                            className="mb-2 text-white bg-blue-500 hover:bg-blue-700 rounded-md px-4 py-2 w-full"
+                        >
+                            Switch to Folder Upload
+                        </button> */}
+                    </div>
                 )}
-                
+
+                {/* {listFullCropImg && (
+                    <div className="flex flex-row">
+                        {listFullCropImg.map((img, index) => (
+                            <div key={index} className="p-2">
+                                <img src={img.url} alt={`Cropped image ${index}`} className="w-40 h-40 object-cover" />
+                            </div>
+                        ))}
+                    </div>
+                )} */}
+
+                {/* {isFolderUpload && (
+                    <>
+                        <div>
+                            <h1 className="text-white text-center mb-2">Upload Folder</h1>
+                        </div>
+                        <FolderUploadComponent setPreviewUrls={setPreviewUrls} />
+                        <button
+                            onClick={() => setIsFolderUpload(false)}
+                            className="mt-2 text-white bg-red-500 hover:bg-red-700 rounded-md px-4 py-2 mb-2 flex justify-center items-center"
+                        >
+                            Switch to Single File Upload
+                        </button>
+                    </>
+                )} */}
+
                 {previewUrl && (
                     <div className="preview-container" style={{ overflow: "auto" }}>
                         {selectedFile?.type === "application/pdf" ? (
@@ -363,6 +464,13 @@ const UploadFile = () => {
                                 className="sm:w-300 sm:h-300 w-700 h-700 max-w-700 rounded-xl"
                             />
                         )}
+                        {/* {
+                            listFullCropImg.map((img, index) => (
+                                <div key={index} className="p-2">
+                                    <img src={img.url} alt={`Cropped image ${index}`} className="w-24 h-24 object-cover" />
+                                </div>
+                            ))
+                        } */}
                     </div>
                 )}
                 {showUpload && (
@@ -392,10 +500,12 @@ const UploadFile = () => {
                                 SAVE CHANGE
                             </button>
                         )}
-                        
+
                     </div>
                 )}
-                
+
+
+
             </div>
             {show && (
                 <div className="m-2">

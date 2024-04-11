@@ -33,9 +33,9 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     onSave,
     onCancel,
     onDetailsChange,
-    toothCariesType,
+    toothCariesType = "NONE",
     setCariesToothType,
-    toothCType,
+    toothCType = "NONE",
     setToothCType
 }) => {
 

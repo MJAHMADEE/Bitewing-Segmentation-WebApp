@@ -85,7 +85,7 @@ export default function Login() {
                         </button>
                         <button
                             type="button"
-                            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+                            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 text-white"
                             onClick={() => router.push('/register')}
                         >
                             Register

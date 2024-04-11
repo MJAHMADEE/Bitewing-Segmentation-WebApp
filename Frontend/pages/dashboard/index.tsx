@@ -3,6 +3,7 @@ import { SideBar } from "@/components/SideBar";
 import Transition from "@/components/Transitions";
 import ReactECharts from 'echarts-for-react';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 interface SettingCardProps {
     title: string;
@@ -125,7 +126,50 @@ const PieChart = () => {
     return <ReactECharts option={option} />;
 };
 
+
+
 export default function DashboardMain() {
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [hostpital, setHospital] = useState('');
+
+    const fetchDentistData = async () => {
+        const token = localStorage.getItem("token"); // สมมติว่าคุณเก็บ token ไว้ใน localStorage
+
+        // http://localhost:5000/v1/dentist/${dentistId}
+        try {
+            const response = await fetch(`http://localhost:5000/v1/dentist/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // ถ้าการดึงข้อมูลสำเร็จ
+                console.log('Dentist data fetched successfully:', result.data);
+                // อัปเดต state ด้วยข้อมูลที่ได้
+                setFirstname(result.data.first_name);
+                setLastname(result.data.last_name);
+                setHospital(result.data.hospital_name || ''); // หรือการจัดการกับ null ต่างๆ
+                // ตั้งค่าอื่นๆตามที่ต้องการ
+            } else {
+                // แสดงข้อผิดพลาดจากเซิร์ฟเวอร์
+                console.error('Failed to fetch dentist data:', result.message);
+            }
+        } catch (error) {
+            console.error('Failed to send request:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDentistData();
+    }, []); // ดึงข้อมูลเมื่อ component ถูก mount
+
+
+
     return (
         <div className="w-full h-screen flex bg-gradient-background items-center ">
             {/* Sidebar */}
@@ -149,7 +193,7 @@ export default function DashboardMain() {
                             />
                         </div>
                         <div>
-                            <h2 className='text-2xl font-bold'>John Doe</h2>
+                            <h2 className='text-2xl font-bold'>{firstname} {lastname}</h2>
                             <p className='text-gray-300'>johndoe@example.com</p>
                         </div>
                     </div>

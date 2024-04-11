@@ -43,10 +43,10 @@ func (s *echoServer) initializeDentistHttpHandler() {
 	dentistRouters := s.app.Group("v1/dentist")
 
 	dentistRouters.Use(TokenAuthentication(dentistPosgresRepository))
-	dentistRouters.PUT("/:id", dentistHttpHandler.UpdateDentist)
-	dentistRouters.GET("/:id", dentistHttpHandler.GetDentistById)
-	dentistRouters.GET("/", dentistHttpHandler.GetDentistAll)
-	dentistRouters.DELETE("/:id", dentistHttpHandler.DeleteDentist)
+	dentistRouters.PUT("/", dentistHttpHandler.UpdateDentist)
+	dentistRouters.GET("/", dentistHttpHandler.GetDentistById)
+	dentistRouters.GET("/all", dentistHttpHandler.GetDentistAll)
+	dentistRouters.DELETE("/", dentistHttpHandler.DeleteDentist)
 }
 
 func (s *echoServer) initializePatientHttpHandler() {

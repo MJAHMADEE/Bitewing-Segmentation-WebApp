@@ -47,7 +47,7 @@ type (
 		Name        *string `json:"name"`
 		TypeTooth   *string `json:"type_tooth"`
 		TypeCaries  *string `json:"type_caries"`
-		Numbering   uint64  `json:"numbering"`
+		Numbering   uint32  `json:"numbering"`
 		Filing      *string `json:"filing"`
 		Position    string  `json:"position"`
 		Description *string `json:"description"`
