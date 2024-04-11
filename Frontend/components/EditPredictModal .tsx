@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
+
+
+const EditPredictModal = ({ isOpen, onClose, onSave, toothData }: { isOpen: boolean, onClose: () => void, onSave: (data: any) => void, toothData: any }) => {
+
     const [localToothData, setLocalToothData] = useState({
         toothId: '',
         toothName: '',
@@ -19,7 +22,7 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
         }
     }, [toothData]);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: any) => {
         const { name, value } = e.target;
         setLocalToothData(prev => ({
             ...prev,
@@ -27,7 +30,7 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault();
         onSave(localToothData);
         onClose();
@@ -36,11 +39,11 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={onClose}>
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onClick={e => e.stopPropagation()}>
-                <h3 className="text-lg font-semibold">Edit Tooth Details</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="mt-4">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full text-black" onClick={onClose}>
+            <div className="relative top-20 mx-auto p-5 border w-[800px] shadow-lg rounded-md bg-white" onClick={e => e.stopPropagation()}>
+                <h3 className="text-lg font-semibold ">Edit Tooth Details</h3>
+                <form onSubmit={handleSubmit} className='grid grid-cols-2'>
+                    <div className="mt-4 mr-4">
                         <label>Tooth ID:</label>
                         <input
                             type="text"
@@ -63,7 +66,7 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
                             className="w-full mt-1 p-2 border rounded-md"
                         />
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 mr-4">
                         <label>Type of Tooth:</label>
                         <input
                             type="text"
@@ -85,7 +88,7 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
                             className="w-full mt-1 p-2 border rounded-md"
                         />
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 mr-4">
                         <label>Numbering:</label>
                         <input
                             type="text"
@@ -107,7 +110,7 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
                             className="w-full mt-1 p-2 border rounded-md"
                         />
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 mr-4">
                         <label>Position:</label>
                         <input
                             type="text"
@@ -129,7 +132,7 @@ const EditPredictModal = ({ isOpen, onClose, onSave, toothData }) => {
                             className="w-full mt-1 p-2 border rounded-md"
                         />
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 mr-4">
                         <label>Treatment:</label>
                         <input
                             type="text"

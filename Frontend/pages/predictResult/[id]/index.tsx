@@ -4,7 +4,29 @@ import NavbarMobile from '@/components/NavbarMobile';
 import NavbarDesktop from '@/components/NavbarDesktop';
 import { useRouter } from 'next/router';
 import EditPredictModal from '@/components/EditPredictModal ';
-import { m } from 'framer-motion';
+
+
+interface MainImage {
+    id: string;
+    imageUrl: string;
+}
+
+interface ToothImageData {
+    id: string;
+    imageUrl: string;
+    toothData: {
+        toothId: string;
+        name: string;
+        typeTooth: string;
+        typeCaries: string;
+        numbering: string;
+        filing: string;
+        position: string;
+        description: string;
+        treatment: string;
+    };
+}
+
 
 export default function PredictResult() {
     const router = useRouter();
@@ -12,9 +34,9 @@ export default function PredictResult() {
 
     const [selectedMainImage, setSelectedMainImage] = useState('');
     const [selectedThumbDetail, setSelectedThumbDetail] = useState('');
-    const [mainImages, setMainImages] = useState([]);
-    const [thumbnailImages, setThumbnailImages] = useState([]);
-    const [selectedToothId, setSelectedToothId] = useState(null);
+    const [mainImages, setMainImages] = useState<MainImage[]>([]);
+    const [thumbnailImages, setThumbnailImages] = useState<ToothImageData[]>([]);
+    const [selectedToothId, setSelectedToothId] = useState<string | null>(null);
     const [toothId, setToothId] = useState('');
     const [toothName, setToothName] = useState('');
     const [toothType, setToothType] = useState('');
@@ -52,10 +74,7 @@ export default function PredictResult() {
                 setMainImages([{ id: 'main', imageUrl: `http://localhost:8000/images/${data.data.bitewing.image.split('/').pop()}` }]);
                 console.log(mainImages);
 
-                // setPreviewUrl(`http://localhost:8000/images/${responseData.data.bitewing_url.split('/').pop()}`);
-                // Map each list_tooth item to a thumbnail image
-                // Set thumbnail images
-                const thumbnails = data.data.list_tooth.map((tooth, index) => ({
+                const thumbnails = data.data.list_tooth.map((tooth: { image: string; id: any; name: any; type_tooth: any; type_caries: any; numbering: any; filing: any; position: any; description: any; treatment: any; }, index: number) => ({
                     id: `thumb${index + 1}`,
                     relatedTo: 'main',
                     imageUrl: `http://localhost:8000/images/${tooth.image.split('/').pop()}`,
@@ -84,7 +103,7 @@ export default function PredictResult() {
         }
     };
 
-    const handleSaveEdit = async (toothData) => {
+    const handleSaveEdit = async (toothData: { toothId: any; toothName: any; toothType: any; toothCariesType: any; toothNumbering: any; toothFiling: any; toothPosition: any; toothDescription: any; toothTreatment: any; }) => {
         console.log("Saving data", toothData);
         const token = localStorage.getItem('token');
 
@@ -131,7 +150,7 @@ export default function PredictResult() {
 
 
     // This function will be called with the selected tooth ID
-    const openEditModal = (toothId) => {
+    const openEditModal = (toothId: string | null) => {
         const toothData = thumbnailImages.find(image => image.toothData.toothId === toothId);
         if (toothData) {
             setToothId(toothData.toothData.toothId);

@@ -11,11 +11,12 @@ interface EditModalProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     initialUserDetails: UserDetails;
-    onSave: (newDetails: UserDetails) => void;
+    onSave: (newDetails: UserDetails) => Promise<void>; // Updated to expect a Promise<void>
     onDelete: () => void;
 }
 
-const EditModal: React.FC<EditModalProps> = ({ isOpen, setIsOpen, initialUserDetails, onSave, onDelete}) => {
+
+const EditModal: React.FC<EditModalProps> = ({ isOpen, setIsOpen, initialUserDetails, onSave, onDelete }) => {
     const [editedUser, setEditedUser] = useState<UserDetails>(initialUserDetails);
 
     useEffect(() => {

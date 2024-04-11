@@ -28,7 +28,6 @@ const FolderUploadComponent: React.FC<FolderUploadProps> = ({ setPreviewUrls }) 
             className="block w-full px-4 py-2 text-sm text-gray-700 bg-white border rounded-md shadow-sm focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             accept="image/png, image/jpeg, image/tiff, application/pdf"
             multiple
-            webkitdirectory=""
         />
     );
 };

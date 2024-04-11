@@ -38,7 +38,7 @@ export default function Predict() {
             <div className="block md:hidden">
                 <NavbarMobile />
             </div>
-            
+
             <div className="hidden md:block w-screen absolute">
                 <NavbarDesktop />
             </div>

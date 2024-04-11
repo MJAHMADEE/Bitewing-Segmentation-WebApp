@@ -1,6 +1,5 @@
 import { SideBar } from "@/components/SideBar";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { PencilIcon } from "@heroicons/react/24/solid";
 import {
     CardHeader,
     Typography,
@@ -14,7 +13,6 @@ import { fadeIn } from '@/variants';
 import Link from "next/link";
 import React, { useEffect, useState } from 'react';
 import EditModal from '../../components/EditModal';
-import EditPredict from "@/components/EditPredict";
 import router from "next/router";
 
 interface UserDetails {
@@ -23,6 +21,35 @@ interface UserDetails {
     birth_date: string;
     gender: string;
 }
+
+interface Patient {
+    patient_id: string;
+    email?: string;
+    gender: string;
+    age: number;
+    birth_date: string;
+    phone?: string;
+}
+
+interface Item {
+    id: string;
+    bitewing: {
+        image?: string;
+    };
+    patient: Patient;
+}
+
+interface TableRow {
+    id: string;
+    img: string;
+    name: string;
+    email: string;
+    gender: string;
+    age: number;
+    birthDate: string;
+    phonenumber: string;
+}
+
 
 export default function HistoryDashboard() {
 
@@ -44,19 +71,16 @@ export default function HistoryDashboard() {
     };
 
     const handleEditClick = (index: number, userDetails: UserDetails) => {
-        setCurrentUserDetails(userDetails); // ตั้งค่าข้อมูลผู้ใช้ที่จะแก้ไข
-        setEditedPatientIndex(index); // ตั้งค่าดัชนีของผู้ใช้ที่จะแก้ไข
-        setIsEditModalOpen(true); // แสดง modal
+        setCurrentUserDetails(userDetails);
+        setEditedPatientIndex(index);
+        setIsEditModalOpen(true);
     };
 
     const handleSaveEdit = async (newDetails: UserDetails) => {
-        // Update currentUserDetails state with the new details
         setCurrentUserDetails(newDetails);
-
-        const patientIdc = patientId; // Use the correct way to get the patient ID
+        const patientIdc = patientId;
         console.log('Patient ID:', patientIdc);
 
-        // Now call your API to update the patient data
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`http://localhost:5000/v1/patient/${patientIdc}`, {
@@ -71,7 +95,6 @@ export default function HistoryDashboard() {
             const data = await response.json();
             if (response.ok) {
                 console.log('Patient updated successfully:', data);
-                // Optionally, you might want to refetch the patient list here
                 fetchAllData();
             } else {
                 console.error('Failed to update patient:', data);
@@ -86,10 +109,8 @@ export default function HistoryDashboard() {
 
     // handle delete
     const handleDelete = async () => {
-        // Assuming you have the patient ID in the editedPatientIndex
-        const patientIdc = patientId; // Use the correct way to get the patient ID
 
-        // Now call your API to delete the patient data
+        const patientIdc = patientId;
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`http://localhost:5000/v1/patient/${patientIdc}`, {
@@ -102,7 +123,6 @@ export default function HistoryDashboard() {
             const data = await response.json();
             if (response.ok) {
                 console.log('Patient deleted successfully:', data);
-                // Optionally, you might want to refetch the patient list here
                 fetchAllData();
             } else {
                 console.error('Failed to delete patient:', data);
@@ -111,7 +131,6 @@ export default function HistoryDashboard() {
             console.error('Failed to send request:', error);
         }
 
-        // Close the modal after deleting
         setIsEditModalOpen(false);
     }
 
@@ -119,7 +138,7 @@ export default function HistoryDashboard() {
 
     const TABLE_HEAD = ["Patient ID", "Gender", "Age", "Birth Date", "Predict Image", "Edit"];
 
-    const [TABLE_ROWS, setTABLE_ROWS] = useState([]);
+    const [TABLE_ROWS, setTABLE_ROWS] = useState<TableRow[]>([]);
     const [currentPage, setCurrentPage] = useState(0); // หน้าปัจจุบัน, เริ่มต้นที่ 0
     const [dataPerPage, setDataPerPage] = useState(5);
     const [totalData, setTotalData] = useState(0);
@@ -128,19 +147,20 @@ export default function HistoryDashboard() {
 
     const [allData, setAllData] = useState([]); // เก็บข้อมูลทั้งหมดที่ได้รับจาก API
 
+
     const fetchAllData = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/v1/patient/`, {
+            const response = await fetch(`http://localhost:5000/v1/segmentation/`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            const data = await response.json();
-            if (data.message === 'Patients found' && data.data.length > 0) {
+            const { message, data } = await response.json();
+            if (message === 'Success' && data.length > 0) {
                 // ใช้เมธอด sort() เพื่อเรียงลำดับข้อมูลตาม patient_id จากใหญ่ไปเล็ก (ล่าสุดมาก่อน)
-                const sortedData = data.data.sort((a, b) => b.patient_id - a.patient_id);
+                const sortedData = data.sort((a: { patient: { patient_id: number; }; }, b: { patient: { patient_id: number; }; }) => b.patient.patient_id - a.patient.patient_id);
                 setAllData(sortedData);
                 setTotalData(sortedData.length);
                 setPageData(sortedData.slice(0, dataPerPage)); // เริ่มต้นโหลดข้อมูลหน้าแรก
@@ -152,19 +172,23 @@ export default function HistoryDashboard() {
         }
     };
 
-    const setPageData = (data: any) => {
-        const formattedData = data.map(item => ({
-            // สมมติว่าคุณไม่มีข้อมูลรูปภาพใน API นี้, หรือถ้ามีก็ต้องใช้ลิงก์ที่ถูกต้อง
-            // สมมติให้ img เป็นตัวอย่าง URL ที่คุณอาจจะมีหรือต้องการเพิ่มเข้าไป
-            img: `https://example.com/images/${item.patient_id}.jpg`,
-            name: `${item.patient_id}`,
-            gender: item.gender,
-            birthDate: item.birth_date,
-            age: item.age,
-            phone: item.phone ? item.phone : "N/A", // ถ้าไม่มีข้อมูล phone ก็ให้แสดง "N/A"
-        }));
+
+    const setPageData = (data: Item[]) => {
+        const formattedData = data.map((item) => {
+            return {
+                id: item.id,
+                img: item.bitewing.image ? `http://localhost:8000/images/${item.bitewing.image.split('/').pop()}` : "path/to/default/image",
+                name: `${item.patient.patient_id}`,
+                email: item.patient.email ? item.patient.email : "N/A",
+                gender: item.patient.gender,
+                age: item.patient.age,
+                birthDate: item.patient.birth_date,
+                phonenumber: item.patient.phone ? item.patient.phone : "N/A",
+            };
+        });
         setTABLE_ROWS(formattedData);
     };
+
 
 
     const handlePreviousPage = () => {
@@ -194,6 +218,7 @@ export default function HistoryDashboard() {
 
     useEffect(() => {
         fetchAllData();
+        console.log(TABLE_ROWS);
     }, []);
 
 
@@ -219,8 +244,9 @@ export default function HistoryDashboard() {
                 <EditModal
                     isOpen={isEditModalOpen}
                     setIsOpen={setIsEditModalOpen}
-                    initialUserDetails={currentUserDetails} // ส่งข้อมูลผู้ใช้เริ่มต้นไปยัง modal
-                    onSave={handleSaveEdit} // ส่งฟังก์ชันสำหรับอัพเดทข้อมูลผู้ใช้
+                    initialUserDetails={{ ...currentUserDetails, age: Number(currentUserDetails.age) }}
+                    // @ts-ignore
+                    onSave={handleSaveEdit}
                     onDelete={handleDelete}
                 />
 
@@ -270,7 +296,7 @@ export default function HistoryDashboard() {
                             </thead>
                             <tbody>
                                 {TABLE_ROWS.map(
-                                    ({ img, name, email, gender, age, birthDate, phonenumber }, index) => {
+                                    ({ id, img, name, email, gender, age, birthDate, phonenumber }, index) => {
                                         const isLast = index === 5;
                                         const classes = isLast
                                             ? "p-4"
@@ -326,7 +352,7 @@ export default function HistoryDashboard() {
                                                 </td>
                                                 <td className={classes}>
                                                     <button onClick={() => {
-                                                        handleModalPredictClick(name);
+                                                        handleModalPredictClick(id);
                                                     }} className=" w-32 h-7 bg-white rounded-md text-black text-center">
                                                         <h1>Predict Image</h1>
                                                     </button>
@@ -335,8 +361,8 @@ export default function HistoryDashboard() {
                                                 <td className={classes}>
                                                     <Tooltip content="Edit User">
                                                         <button onClick={() => {
-                                                            handleEditClick(index, { age, birth_date: birthDate, gender })
-                                                            setPatientId(name);
+                                                            handleEditClick(index, { age: age.toString(), birth_date: birthDate, gender })
+                                                            setPatientId(Number(id));
                                                         }
                                                         }>
                                                             <PencilIcon className="h-4 w-4 text-white" />
