@@ -42,7 +42,7 @@ export default function HistoryDashboard() {
     const [isEditPredictOpen, setEditPredictOpen] = useState(false);
 
 
-    const handleModalPredictClick = async (patientIdc) => {
+    const handleModalPredictClick = async (patientIdc: any) => {
         // เปลี่ยนหน้าไปยัง predictResult พร้อม ID ที่ต้องการ
         router.push(`/predictResult/${patientIdc}`);
     };
@@ -156,7 +156,7 @@ export default function HistoryDashboard() {
         }
     };
 
-    const setPageData = (data) => {
+    const setPageData = (data: any) => {
         const formattedData = data.map(item => ({
             // สมมติว่าคุณไม่มีข้อมูลรูปภาพใน API นี้, หรือถ้ามีก็ต้องใช้ลิงก์ที่ถูกต้อง
             // สมมติให้ img เป็นตัวอย่าง URL ที่คุณอาจจะมีหรือต้องการเพิ่มเข้าไป
@@ -228,8 +228,6 @@ export default function HistoryDashboard() {
 
     return (
         <div className="w-full h-screen">
-            {/* <Transition /> */}
-
             <div
                 className="bg-gradient-background h-full flex items-center justify-between ">
 

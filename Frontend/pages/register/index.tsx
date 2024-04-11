@@ -9,6 +9,7 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [successModal, setSuccessModal] = useState(false);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -55,6 +56,16 @@ export default function Register() {
                 status={"success"}
             />
 
+            {/* Success modal */}
+            <Modal
+                isOpen={successModal}
+                setIsOpen={setSuccessModal}
+                title="Register"
+                message="Registration successful! Please log in."
+                onUnderstood={() => router.push('/login')}
+                status={"success"}
+            />
+
             <Transition />
             <div className="bg-gradient-background h-full flex items-center justify-center">
                 <div className="w-[500px] h-[600px] rounded-lg">
@@ -65,17 +76,17 @@ export default function Register() {
                         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
                         onSubmit={handleSubmit}
                     >
-                        <label className="text-md" htmlFor="email">Username</label>
+                        <label className="text-md text-white" htmlFor="email">Username</label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder=""
                             required
                         />
-                        <label className="text-md" htmlFor="password">Password</label>
+                        <label className="text-md text-white" htmlFor="password">Password</label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -91,23 +102,23 @@ export default function Register() {
                             placeholder=""
                             required
                         /> */}
-                        <label className="text-md" htmlFor="first_name">First Name</label>
+                        <label className="text-md text-white" htmlFor="first_name">Firstname</label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             placeholder=""
                             required
                         />
-                        <label className="text-md" htmlFor="last_name">Last Name</label>
+                        <label className="text-md text-white" htmlFor="last_name">Lastname</label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             placeholder=""
                             required
                         />
-                        <button type="submit" className="bg-white text-black rounded-md px-4 py-2 text-foreground mb-2">
+                        <button onClick={() => setSuccessModal(true)} type="submit" className="bg-white text-black rounded-md px-4 py-2 text-foreground mb-2">
                             Register
                         </button>
                         <button onClick={() => router.push('../login')}
