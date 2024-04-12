@@ -54,15 +54,15 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepare
     useEffect(() => {
         let indexStr = localStorage.getItem("index");
         let index: number | null = null;
-        if(indexStr != null){
-            index = parseInt(indexStr,10);
+        if (indexStr != null) {
+            index = parseInt(indexStr, 10);
             console.log(index)
             setCurrentToothDetails({
                 index: index,
                 details: images[index].detail || '',
                 imageUrl: images[index].image_url || '',
                 tooth_id: images[index].tooth_id,
-                numbering: images[index].numbering || '' ,
+                numbering: images[index].numbering || '',
                 confidence: images[index].confidence || '',
                 carie_type: images[index].carie_type || '',
                 severity: images[index].severity || ''
@@ -70,8 +70,8 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepare
             setCariesToothType(currentToothDetails.carie_type)
             setToothCType(currentToothDetails.severity)
         }
-        
-    },[localStorage.getItem("index")])
+
+    }, [localStorage.getItem("index")])
 
     const onImageSelect = (index: number, checked: boolean) => {
         const newSelectedImages = [...selectedImages];
@@ -79,7 +79,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepare
         setSelectedImages(newSelectedImages);
     };
 
-    const openDetailsModal = (index: number) => { 
+    const openDetailsModal = (index: number) => {
         // setCariesToothType(currentToothDetails.carie_type)
         // setToothCType(currentToothDetails.severity)
         // setCurrentToothDetails({
@@ -142,7 +142,7 @@ const ImageTable: React.FC<ImageTableProps> = ({ images, setListCropImg, prepare
                                     height={100}
                                     className="max-w-xs rounded-md"
                                 /> */}
-                                <img src={img.image_url} className="w-[100px]"/>
+                                <img src={img.image_url} className="w-[100px]" />
                                 <div className="w-full ml-2">
                                     <h1 className="text-2xl font-bold mb-2">Class {img.numbering}</h1>
                                     <p>confidence: {img.confidence.substring(0, 5)}</p>

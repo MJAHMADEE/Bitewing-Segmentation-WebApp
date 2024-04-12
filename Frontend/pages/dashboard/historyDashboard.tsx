@@ -225,7 +225,6 @@ export default function HistoryDashboard() {
     useEffect(() => {
         // ตรวจสอบ token ใน localStorage
         const token = localStorage.getItem("token");
-
         // หากไม่พบ token, เปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบหรือหน้า "Page Not Found"
         if (!token) {
             // router.push('/login'); // สำหรับเปลี่ยนเส้นทางไปหน้าเข้าสู่ระบบ
@@ -361,13 +360,11 @@ export default function HistoryDashboard() {
                                                 <td className={classes}>
                                                     <Tooltip content="Edit User">
                                                         <button onClick={() => {
-                                                            handleEditClick(index, { age: age.toString(), birth_date: birthDate, gender })
-                                                            setPatientId(Number(id));
-                                                        }
-                                                        }>
+                                                            handleEditClick(index, { age: age.toString(), birth_date: birthDate, gender });
+                                                            setPatientId(Number(name));
+                                                        }}>
                                                             <PencilIcon className="h-4 w-4 text-white" />
                                                         </button>
-
                                                     </Tooltip>
                                                 </td>
                                             </tr>
