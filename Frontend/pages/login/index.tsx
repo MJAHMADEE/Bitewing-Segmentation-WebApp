@@ -51,13 +51,13 @@ export default function Login() {
             <div className="bg-gradient-background h-full flex items-center justify-center">
                 <div className="w-[500px] h-[600px] rounded-lg border-white">
                     <div className="flex justify-center items-center h-[100px]">
-                        <h1 className="text-4xl font-bold text-white">Login</h1>
+                        <h1 className="text-4xl font-thin text-white">LOGIN</h1>
                     </div>
                     <form
                         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground border-white border p-14 rounded-xl"
                         onSubmit={handleSubmit}
                     >
-                        <label className="text-md text-white" htmlFor="username">
+                        <label className="text-md text-white font-thin" htmlFor="username">
                             Username
                         </label>
                         <input
@@ -68,7 +68,7 @@ export default function Login() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
-                        <label className="text-md text-white" htmlFor="password">
+                        <label className="text-md text-white font-thin" htmlFor="password">
                             Password
                         </label>
                         <input

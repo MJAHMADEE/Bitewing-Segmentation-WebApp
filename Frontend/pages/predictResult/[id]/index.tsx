@@ -37,15 +37,15 @@ export default function PredictResult() {
     const [mainImages, setMainImages] = useState<MainImage[]>([]);
     const [thumbnailImages, setThumbnailImages] = useState<ToothImageData[]>([]);
     const [selectedToothId, setSelectedToothId] = useState<string | null>(null);
-    const [toothId, setToothId] = useState('');
-    const [toothName, setToothName] = useState('');
-    const [toothType, setToothType] = useState('');
-    const [toothCariesType, setToothCariesType] = useState('');
-    const [toothNumbering, setToothNumbering] = useState('');
-    const [toothFiling, setToothFiling] = useState('');
-    const [toothPosition, setToothPosition] = useState('');
-    const [toothDescription, setToothDescription] = useState('');
-    const [toothTreatment, setToothTreatment] = useState('');
+    const [toothId, setToothId] = useState('NONE');
+    const [toothName, setToothName] = useState('NONE');
+    const [toothType, setToothType] = useState('NONE');
+    const [toothCariesType, setToothCariesType] = useState('NONE');
+    const [toothNumbering, setToothNumbering] = useState('NONE');
+    const [toothFiling, setToothFiling] = useState('NONE');
+    const [toothPosition, setToothPosition] = useState('NONE');
+    const [toothDescription, setToothDescription] = useState('NONE');
+    const [toothTreatment, setToothTreatment] = useState('NONE');
 
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
