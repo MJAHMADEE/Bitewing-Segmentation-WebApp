@@ -132,6 +132,9 @@ export default function DashboardMain() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [hostpital, setHospital] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [gender, setGender] = useState('');
+    const [exp, setExp] = useState('');
 
     const fetchDentistData = async () => {
         const token = localStorage.getItem("token"); // สมมติว่าคุณเก็บ token ไว้ใน localStorage
@@ -149,11 +152,15 @@ export default function DashboardMain() {
 
             if (response.ok) {
                 // ถ้าการดึงข้อมูลสำเร็จ
-                console.log('Dentist data fetched successfully:', result.data);
+                // console.log('Dentist data fetched successfully:', result.data);
                 // อัปเดต state ด้วยข้อมูลที่ได้
                 setFirstname(result.data.first_name);
                 setLastname(result.data.last_name);
                 setHospital(result.data.hospital_name || ''); // หรือการจัดการกับ null ต่างๆ
+                setStartDate(result.data.start_date);
+                setGender(result.data.gender);
+                setExp(result.data.year_ext);
+
                 // ตั้งค่าอื่นๆตามที่ต้องการ
             } else {
                 // แสดงข้อผิดพลาดจากเซิร์ฟเวอร์
@@ -193,13 +200,15 @@ export default function DashboardMain() {
                             />
                         </div>
                         <div>
-                            <h2 className='text-2xl font-bold'>{firstname} {lastname}</h2>
-                            <p className='text-gray-300'>johndoe@example.com</p>
+                            <h2 className='text-2xl font-thin'>{firstname} {lastname}</h2>
+                            {/* <p className='text-gray-300'>johndoe@example.com</p> */}
                         </div>
                     </div>
                     <div>
-                        <h3 className='text-xl font-semibold mb-2'>Account Details</h3>
-                        <p className='text-gray-300'>Manage your personal information</p>
+                        <h3 className='text-xl font-thin mb-2'>Account Details</h3>
+                        <p className='text-gray-300 font-thin'>Gender : {gender}</p>
+                        <p className='text-gray-300 font-thin'>Year experience : {exp}</p>
+                        <p className='text-gray-300 font-thin'>Register at : {startDate}</p>
                     </div>
                 </div>
 

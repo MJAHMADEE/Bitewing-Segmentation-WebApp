@@ -79,7 +79,7 @@ export default function HistoryDashboard() {
     const handleSaveEdit = async (newDetails: UserDetails) => {
         setCurrentUserDetails(newDetails);
         const patientIdc = patientId;
-        console.log('Patient ID:', patientIdc);
+        // console.log('Patient ID:', patientIdc);
 
         const token = localStorage.getItem('token');
         try {
@@ -314,13 +314,13 @@ export default function HistoryDashboard() {
                                                             >
                                                                 Patient ID : {name}
                                                             </Typography>
-                                                            <Typography
+                                                            {/* <Typography
                                                                 variant="small"
                                                                 color="blue-gray"
                                                                 className="font-normal opacity-70"
                                                             >
                                                                 {email}
-                                                            </Typography>
+                                                            </Typography> */}
                                                         </div>
                                                     </div>
                                                 </td>

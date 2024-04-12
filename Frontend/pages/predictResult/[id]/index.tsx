@@ -247,7 +247,7 @@ export default function PredictResult() {
                     </div>
                     <div>
                         <button
-                            className="mt-4 bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                            className="mt-4 bg-blue-500 text-white active:bg-blue-600 font-this uppercase text-lg px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                             type="button"
                             onClick={() => openEditModal(selectedToothId)}
                         >

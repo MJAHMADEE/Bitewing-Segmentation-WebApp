@@ -7,14 +7,16 @@ import Transition from '@/components/Transitions';
 import EditModal from '@/components/EditModal';
 import router from 'next/router';
 import Modal from '@/components/Modal';
+import exp from 'constants';
 
 
 export default function ProfileSetting() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [hostpital, setHospital] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // const [exp, setExp] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [password, setPassword] = useState('');
     const [profileImage, setProfileImage] = useState(null);
     const [previewImage, setPreviewImage] = useState('');
 
@@ -92,11 +94,11 @@ export default function ProfileSetting() {
 
             if (response.ok) {
                 // ถ้าการดึงข้อมูลสำเร็จ
-                console.log('Dentist data fetched successfully:', result.data);
+                // console.log('Dentist data fetched successfully:', result.data);
                 // อัปเดต state ด้วยข้อมูลที่ได้
                 setFirstname(result.data.first_name);
                 setLastname(result.data.last_name);
-                setEmail(result.data.username);
+                // setEmail(result.data.username);
                 setHospital(result.data.hospital_name || ''); // หรือการจัดการกับ null ต่างๆ
                 // ตั้งค่าอื่นๆตามที่ต้องการ
             } else {
@@ -143,7 +145,7 @@ export default function ProfileSetting() {
                     initial="hidden"
                     animate="show"
                     exit="hidden"
-                    className="w-[500px] h-[620px] bg-blue-900 p-8 rounded-xl">
+                    className="w-[500px] h-[460px] bg-blue-900 p-8 rounded-xl">
                     {/* Profile setting page */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Profile Image Upload */}
@@ -190,7 +192,7 @@ export default function ProfileSetting() {
                         </div> */}
                         {/* Submit Button */}
                         <div>
-                            <button onClick={() => updateDentist()} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <button onClick={() => updateDentist()} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-7">
                                 Update Profile
                             </button>
                         </div>

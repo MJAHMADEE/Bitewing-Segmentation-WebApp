@@ -49,9 +49,9 @@ const UploadFile = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/segmentation/crop", {
+      const response = await fetch("http://127.0.0.1:8000/api/segmentation/test_crop", {
         method: "POST",
-        headers:{
+        headers: {
           Authorization: `Bearer ${token}`,
         },
         body: formData,
@@ -62,15 +62,16 @@ const UploadFile = () => {
       }
 
       const responseData = await response.json();
-      if (responseData.data.bitewing_file) {
+      if (responseData.data.crop_img) {
         // Assuming `responseData.crop_img` is the base64 string of the cropped image
         // Convert base64 string to an image and set it for preview
-        setPreviewUrl(`http://localhost:8000/images/${responseData.data.bitewing_url.split('/').pop()}`);
+        setPreviewUrl(`http://localhost:8000/images/${responseData.data.crop_img.split('/').pop()}`);
+        console.log(responseData.data.crop_img);
         // console.log(responseData.list_crop_img);
-        if (Array.isArray(responseData.data.list_tooth)) {
-          const formattedList = responseData.data.list_tooth.map((item: { image_file: string }) => `data:image/jpeg;base64,${item.image_file}`);
-          setListCropImg(formattedList);
-        }
+        // if (Array.isArray(responseData.data.list_tooth)) {
+        //   const formattedList = responseData.data.list_tooth.map((item: { image_file: string }) => `data:image/jpeg;base64,${item.image_file}`);
+        //   setListCropImg(formattedList);
+        // }
 
       }
 
@@ -161,7 +162,7 @@ const UploadFile = () => {
             //     maxHeight: "500px",
             //   }}
             // />
-            <img src={previewUrl}/>
+            <img src={previewUrl} />
           ) : (
             // <Image
             //   src={previewUrl}
@@ -170,7 +171,7 @@ const UploadFile = () => {
             //   alt="Preview"
             //   className="mb-4 max-w-xs rounded-md"
             // />
-            <img src={previewUrl}/>
+            <img src={previewUrl} />
           )}
         </div>
       )}

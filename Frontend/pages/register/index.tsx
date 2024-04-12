@@ -111,7 +111,7 @@ export default function Register() {
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 translate-y-3"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? 'Hide' : 'Show'}
@@ -130,7 +130,7 @@ export default function Register() {
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 translate-y-3"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             >
                                 {showConfirmPassword ? 'Hide' : 'Show'}
